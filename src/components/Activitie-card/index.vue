@@ -26,7 +26,15 @@
 </template>
 
 <script>
+import {
+  Tag,
+  Card
+} from 'vant';
 export default {
+   components: {
+    [Tag.name]: Tag,
+    [Card.name]: Card,
+  },
   data() {
     return {
       value: '',
@@ -51,9 +59,9 @@ export default {
 </script>
 <style>
 .van-card {
-  color: #333;
-  font-size: 14px;
-  text-align:left
+  /* color: #333; */
+  font-size: 16px;
+  /* text-align:left */
 }
 
 </style>

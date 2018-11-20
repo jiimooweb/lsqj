@@ -10,11 +10,16 @@
 
 <script>
 import ActivitieCard from '@/components/Activitie-card/index.vue'
-
+import {
+  NavBar,
+  Search
+} from 'vant';
 export default {
   name: 'activitie',
   components: {
-    ActivitieCard
+    ActivitieCard,
+     [NavBar.name]: NavBar,
+     [Search.name]: Search,
   },
   data() {
     return {
