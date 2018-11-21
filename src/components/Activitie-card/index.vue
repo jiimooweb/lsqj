@@ -2,16 +2,16 @@
   <div>
 
     <van-card tag="" title="半程马拉松比赛既全民健跑活动" :thumb="imageURL">
-      <div slot="tags">
-        12312312312312312312
+      <div class="time" slot="tags">
+        5月12日下午2点-5点
       </div>
       <div slot="footer">
         <van-tag round type="danger">暂停</van-tag>
       </div>
     </van-card>
     <van-card tag="" title="100条微信文章标题套路 让你轻松做标题党" :thumb="imageURL">
-      <div slot="tags">
-                5月12日下午2点-5点
+      <div class="time" slot="tags">
+        5月12日下午2点-5点
       </div>
       <div slot="footer">
         <van-tag round type="primary">未开始</van-tag>
@@ -31,7 +31,7 @@ import {
   Card
 } from 'vant';
 export default {
-   components: {
+  components: {
     [Tag.name]: Tag,
     [Card.name]: Card,
   },
@@ -57,13 +57,17 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="less">
 .van-card {
-  /* color: #333; */
+  color: #333;
   font-size: 16px;
-  /* text-align:left */
+   text-align: left;
+  .time {
+    margin-top: 6px;
+    color: #666;
+    font-size: 14px;
+  }
 }
-
 </style>
 
 

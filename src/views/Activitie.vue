@@ -1,6 +1,6 @@
 <template>
   <div>
-    <van-nav-bar title="活动列表" left-text="返回" right-text="按钮" left-arrow @click-left="onClickLeft" @click-right="onClickRight" />
+    <van-nav-bar title="活动列表" left-text="返回" left-arrow @click-left="onClickLeft" />
     <form action="/">
       <van-search v-model="value" placeholder="请输入搜索关键词" show-action @search="onSearch" @cancel="onCancel" />
     </form>
@@ -29,9 +29,6 @@ export default {
   methods: {
     onClickLeft() {
       Toast('返回');
-    },
-    onClickRight() {
-      Toast('按钮');
     },
     onSearch() {
 
