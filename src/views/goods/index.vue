@@ -12,28 +12,21 @@
                 <div class="goods-price">{{ formatPrice(goods.price) }}</div>
             </van-cell>
             <van-cell class="goods-express">
-                <van-col span="14">库存：{{ goods.remain }}</van-col>
+                <van-col span="8">月销：{{ goods.express }}</van-col>
+                <van-col span="8">库存：{{ goods.remain }}</van-col>
+                <van-col span="8">规格:  500g/件</van-col>
             </van-cell>
         </van-cell-group>
-
         <van-cell-group class="goods-cell-group">
-            <van-cell value="进入店铺" icon="shop" is-link @click="sorry">
-                <template slot="title">
-                    <span class="van-cell-text">有赞的店</span>
-                    <van-tag class="goods-tag" type="danger">官方</van-tag>
-                </template>
-            </van-cell>
-            <van-cell title="线下门店" icon="location" is-link @click="sorry" />
-        </van-cell-group>
-
-        <van-cell-group class="goods-cell-group">
-            <van-cell title="查看商品详情" is-link @click="sorry" />
+            <van-cell title="查看商品详情"/>
+            <p>这是一件水果，每件200g</p>
+            <img width="100%" src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2555138269,3303889194&fm=27&gp=0.jpg">
         </van-cell-group>
 
         <van-goods-action>
-            <van-goods-action-mini-btn icon="chat" @click="sorry">
+            <!-- <van-goods-action-mini-btn icon="chat" @click="sorry">
                 客服
-            </van-goods-action-mini-btn>
+            </van-goods-action-mini-btn> -->
             <van-goods-action-mini-btn icon="cart" @click="onClickCart">
                 购物车
             </van-goods-action-mini-btn>
