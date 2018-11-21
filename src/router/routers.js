@@ -22,5 +22,9 @@ export default [
       name: 'goods',
       // component: () => import( '@/views/cart/index.js')
       component: () => import( '@/views/goods.vue')
+    },{
+      path: '/cart',
+      name: 'cart',
+      component: () => import( '@/views/cart.vue')
     }
   ]
