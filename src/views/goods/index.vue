@@ -24,16 +24,13 @@
         </van-cell-group>
 
         <van-goods-action>
-            <!-- <van-goods-action-mini-btn icon="chat" @click="sorry">
-                客服
-            </van-goods-action-mini-btn> -->
             <van-goods-action-mini-btn icon="cart" @click="onClickCart">
                 购物车
             </van-goods-action-mini-btn>
             <van-goods-action-big-btn @click="sorry">
                 加入购物车
             </van-goods-action-big-btn>
-            <van-goods-action-big-btn primary @click="sorry">
+            <van-goods-action-big-btn primary @click="sorry" v-if='goodsType === 1'>
                 立即购买
             </van-goods-action-big-btn>
         </van-goods-action>
@@ -71,6 +68,7 @@ export default {
 
     data() {
         return {
+            goodsType:0,
             goods: {
                 title: "美国伽力果（约680g/3个）",
                 price: 2680,

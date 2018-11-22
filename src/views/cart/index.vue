@@ -2,13 +2,16 @@
     <div>
         <div class="cart_page">
             <p class="cart_title">
-                <span><van-icon name="arrow-left"  style="vertical-align: middle;margin-top:-4px;" size='18px'/> 购物车</span>
+                <span>购物车</span>
             </p>
-            <van-checkbox-group class="card-goods" v-model="checkedGoods">
-                <van-checkbox class="card-goods__item" v-for="item in goods" :key="item.id" :name="item.id">
-                    <van-card :title="item.title" :desc="item.desc" :num="item.num" :price="formatPrice(item.price)" :thumb="item.thumb" />
-                </van-checkbox>
-            </van-checkbox-group>
+            <div class="cart_item_page">
+                <van-checkbox-group class="card-goods" v-model="checkedGoods">
+                    <van-checkbox class="card-goods__item" v-for="item in goods" :key="item.id" :name="item.id">
+                        <van-card :title="item.title" :desc="item.desc" :num="item.num" :price="formatPrice(item.price)" :thumb="item.thumb" />
+                    </van-checkbox>
+                </van-checkbox-group>
+            </div>
+
             <van-submit-bar :price="totalPrice" :disabled="!checkedGoods.length" :button-text="submitBarText" @submit="onSubmit">
                 <van-checkbox class="isAll" v-model="isAll">全选</van-checkbox>
             </van-submit-bar>
@@ -31,8 +34,8 @@ export default {
 
     data() {
         return {
-            isAll:false,
-            checkedGoods: ["1", "2", "3",'5'],
+            isAll: false,
+            checkedGoods: ["1", "2", "3", "5"],
             goods: [
                 {
                     id: "1",
@@ -123,64 +126,72 @@ export default {
 </script>
 
 <style lang="less">
-.cart_title{
-    overflow: hidden;
-    display: block;
-    height: 50px;
-    width: 100%;
-    background: #f44;
-    color: #fff;
-    font-size:18px;
-    font-weight: bold;
-    line-height: 50px;
-    padding-left:20px;
-    margin-top: 0;
-    text-align: left;
-}
-.cart_page{
+.cart_page {
     position: absolute;
     width: 100%;
     height: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
+
     background: #f2f2f2;
-    .card-goods {
-        width: 90%;
-        padding: 10px 10px 10px 5px;
-        border-radius: 15px;
-        margin: 0 auto 70px;
-        background: #fff;
-    &__item {
-        margin-bottom: 10px;
-        position: relative;
-        background-color: #fff;
-
-        .van-checkbox__label {
-            width: 100%;
-            padding: 0 10px 0 15px;
-            box-sizing: border-box;
-        }
-
-        .van-checkbox__icon {
-            top: 50%;
-            left: 10px;
-            z-index: 1;
-            position: absolute;
-            margin-top: -10px;
-        }
-        .van-checkbox__label{
-            .van-card{
+    .cart_title {
+        position: fixed;
+        z-index: 1000;
+        overflow: hidden;
+        display: block;
+        height: 50px;
+        width: 100%;
+        background: #f44;
+        color: #fff;
+        font-size: 18px;
+        font-weight: bold;
+        line-height: 50px;
+        padding-left: 20px;
+        margin-top: 0;
+        text-align: left;
+    }
+    .cart_item_page {
+        width: 100%;
+        height: calc(100% - 50px - 50px);
+        overflow-y: scroll;
+        overflow-x: hidden;
+        // padding: 10px 10px 10px 5px;
+        margin: 50px auto 0;
+        .card-goods {
+            width: 90%;
+            overflow: hidden;
+            margin: 20px auto 20px;
+            border-radius: 10px;
+            background: #fff;
+            &__item {
+                margin-bottom: 10px;
+                position: relative;
                 background-color: #fff;
+
+                .van-checkbox__label {
+                    width: 100%;
+                    padding: 0 10px 0 15px;
+                    box-sizing: border-box;
+                }
+
+                .van-checkbox__icon {
+                    top: 50%;
+                    left: 10px;
+                    z-index: 1;
+                    position: absolute;
+                    margin-top: -10px;
+                }
+                .van-checkbox__label {
+                    .van-card {
+                        background-color: #fff;
+                    }
+                }
+                .van-card__price {
+                    color: #f44;
+                }
             }
         }
-        .van-card__price {
-            color: #f44;
-        }
+    }
+    .isAll {
+        margin-left: 10px;
     }
 }
-.isAll{
-    margin-left: 10px;
-}
-}
-
 </style>
