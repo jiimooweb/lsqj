@@ -1,29 +1,30 @@
 <template>
-    <div class="goods">
-        <van-swipe class="goods-swipe" :autoplay="3000">
-            <van-swipe-item v-for="thumb in goods.thumb" :key="thumb">
-                <img :src="thumb">
-            </van-swipe-item>
-        </van-swipe>
+    <div class="goods_page">
+        <div class="goods">
+            <van-swipe class="goods-swipe" :autoplay="3000">
+                <van-swipe-item v-for="thumb in goods.thumb" :key="thumb">
+                    <img :src="thumb">
+                </van-swipe-item>
+            </van-swipe>
 
-        <van-cell-group>
-            <van-cell>
-                <div class="goods-title">{{ goods.title }}</div>
-                <div class="goods-price">{{ formatPrice(goods.price) }}</div>
-            </van-cell>
-            <van-cell class="goods-express">
-                <van-col span="8">月销：{{ goods.express }}</van-col>
-                <van-col span="8">库存：{{ goods.remain }}</van-col>
-                <van-col span="8">规格:  500g/件</van-col>
-            </van-cell>
-        </van-cell-group>
-        <van-cell-group class="goods-cell-group">
-            <van-cell title="查看商品详情"/>
-            <p>这是一件水果，每件200g</p>
-            <img width="100%" src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2555138269,3303889194&fm=27&gp=0.jpg">
-        </van-cell-group>
-
-        <van-goods-action>
+            <van-cell-group>
+                <van-cell>
+                    <div class="goods-title">{{ goods.title }}</div>
+                    <div class="goods-price">{{ formatPrice(goods.price) }}</div>
+                </van-cell>
+                <van-cell class="goods-express">
+                    <van-col span="8">月销：{{ goods.express }}</van-col>
+                    <van-col span="8">库存：{{ goods.remain }}</van-col>
+                    <van-col span="8">规格: 500g/件</van-col>
+                </van-cell>
+            </van-cell-group>
+            <van-cell-group class="goods-cell-group">
+                <van-cell title="查看商品详情" />
+                <p>这是一件水果，每件200g</p>
+                <img width="100%" src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2555138269,3303889194&fm=27&gp=0.jpg">
+            </van-cell-group>
+        </div>
+        <van-goods-action class="goods-click">
             <van-goods-action-mini-btn icon="cart" @click="onClickCart">
                 购物车
             </van-goods-action-mini-btn>
@@ -35,6 +36,7 @@
             </van-goods-action-big-btn>
         </van-goods-action>
     </div>
+
 </template>
 
 <script>
@@ -68,7 +70,7 @@ export default {
 
     data() {
         return {
-            goodsType:0,
+            goodsType: 0,
             goods: {
                 title: "美国伽力果（约680g/3个）",
                 price: 2680,
@@ -99,40 +101,49 @@ export default {
 </script>
 
 <style lang="less">
-.goods {
-    padding-bottom: 50px;
-
-    &-swipe {
-        img {
-            width: 100%;
-            display: block;
+.goods_page {
+    .goods {
+        position: absolute;
+        padding-bottom: 50px;
+        width: 100%;
+        height: calc(100% - 50px - 50px);
+        overflow-x: hidden;
+        overflow-y: scroll;
+        &-swipe {
+            img {
+                width: 100%;
+                display: block;
+            }
         }
-    }
 
-    &-title {
-        font-size: 16px;
-    }
+        &-title {
+            font-size: 16px;
+        }
 
-    &-price {
-        color: #f44;
-    }
+        &-price {
+            color: #f44;
+        }
 
-    &-express {
-        color: #999;
-        font-size: 12px;
-        padding: 5px 15px;
-    }
-
-    &-cell-group {
-        margin: 15px 0;
-
-        .van-cell__value {
+        &-express {
             color: #999;
+            font-size: 12px;
+            padding: 5px 15px;
+        }
+
+        &-cell-group {
+            margin: 15px 0;
+
+            .van-cell__value {
+                color: #999;
+            }
+        }
+
+        &-tag {
+            margin-left: 5px;
         }
     }
-
-    &-tag {
-        margin-left: 5px;
+    .goods-click {
+        bottom: 50px;
     }
 }
 </style>

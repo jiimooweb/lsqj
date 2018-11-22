@@ -150,7 +150,7 @@ export default {
     }
     .cart_item_page {
         width: 100%;
-        height: calc(100% - 50px - 50px);
+        height: calc(100% - 50px - 50px - 50px);
         overflow-y: scroll;
         overflow-x: hidden;
         // padding: 10px 10px 10px 5px;
@@ -189,6 +189,9 @@ export default {
                 }
             }
         }
+    }
+    .van-submit-bar {
+        bottom: 50px;
     }
     .isAll {
         margin-left: 10px;
