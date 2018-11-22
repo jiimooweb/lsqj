@@ -153,7 +153,6 @@ export default {
         height: calc(100% - 50px - 50px - 50px);
         overflow-y: scroll;
         overflow-x: hidden;
-        // padding: 10px 10px 10px 5px;
         margin: 50px auto 0;
         .card-goods {
             width: 90%;

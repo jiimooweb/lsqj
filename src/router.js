@@ -36,6 +36,20 @@ const routes = [
     meta: {
       title: '首页'
     }
+  },
+  {
+    name: 'order',
+    component: () => import('./views/order'),
+    meta: {
+      title: '订单'
+    }
+  },
+  {
+    name: 'orderDetail',
+    component: () => import('./views/orderDetail'),
+    meta: {
+      title: '订单'
+    }
   }
 ];
 
