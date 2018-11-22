@@ -29,6 +29,13 @@ const routes = [
     meta: {
       title: '商品详情'
     }
+  },
+  {
+    name: 'mall',
+    component: () => import('./views/mall'),
+    meta: {
+      title: '首页'
+    }
   }
 ];
 
