@@ -131,7 +131,7 @@ export default {
                 }
             }
         }
-    }
+    }  
     &-click {
         width: 100%;
         height: 40px;
@@ -155,6 +155,7 @@ export default {
         width: 100%;
         padding-bottom: 10px;
         overflow: hidden;
+        margin-top: 20px;
         &-p {
             height: 20px;
             margin: 0;

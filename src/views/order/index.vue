@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div class="order-list-item-click">
-                    <van-button class="order-list-item-click-intoDefail" round type="default" size="small" @click="getOrder()">订单详情</van-button>
+                    <van-button class="order-list-item-click-intoDefail" round type="default" size="small" @click="inOrderDetail()">订单详情</van-button>
                     <van-button class="order-list-item-click-qrcode" round type="default" size="small">核销二维码</van-button>
                 </div>
             </div>
@@ -75,8 +75,11 @@ export default {
         };
     },
     methods: {
-        getOrder() {
+        inOrderDetail() {
             this.$router.push("/orderDetail");
+        },
+        getOrder(){
+
         }
     },
     mounted() {}
