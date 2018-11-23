@@ -5,7 +5,7 @@
         <!-- tabbar -->
         <van-tabbar v-model="active">
             <van-tabbar-item icon="shop" to='/mall'>首页</van-tabbar-item>
-            <van-tabbar-item icon="more-o">标签</van-tabbar-item>
+            <van-tabbar-item icon="more-o">分类</van-tabbar-item>
             <van-tabbar-item icon="cart" to='/cart'>购物车</van-tabbar-item>
             <van-tabbar-item icon="pending-orders">订单</van-tabbar-item>
         </van-tabbar>
