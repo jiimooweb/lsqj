@@ -54,6 +54,8 @@
 
 <script>
 import { Button } from "vant";
+import Token from '../../public/util.js'
+const token = new Token
 export default {
   components: {
     [Button.name]: Button
@@ -71,7 +73,7 @@ export default {
   },
   methods:{
       init(){
-          
+          token.initToken(this.$route.query.token)
       }
   },
   mounted(){
