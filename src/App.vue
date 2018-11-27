@@ -31,7 +31,8 @@
 </template>
 <script>
 import { Tabbar, TabbarItem } from "vant";
-
+import Token from './public/util.js'
+const token = new Token
 export default {
     components: {
         [Tabbar.name]: Tabbar,
@@ -54,9 +55,8 @@ export default {
         }
     },
     mounted() { 
+        // token.initToken()
         this.returnShowTabbar()
-        // console.log(this.$router);
-        
     },
     methods: {
         returnShowTabbar(){

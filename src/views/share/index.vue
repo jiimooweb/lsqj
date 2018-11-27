@@ -54,7 +54,6 @@
 
 <script>
 import { Button } from "vant";
-
 export default {
   components: {
     [Button.name]: Button
@@ -69,7 +68,16 @@ export default {
         }
       ]
     };
+  },
+  methods:{
+      init(){
+          
+      }
+  },
+  mounted(){
+      this.init()
   }
+
 };
 </script>
 
