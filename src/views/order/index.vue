@@ -32,6 +32,11 @@
 <script>
 import { Tab, Tabs, Button } from "vant";
 
+import Vue from 'vue'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+Vue.use(VueAxios, axios)
+
 export default {
     components: {
         [Tab.name]: Tab,
@@ -79,10 +84,16 @@ export default {
             this.$router.push("/orderDetail");
         },
         getOrder(){
-
+            axios.get('https://www.baidu.com')
+            .then(function (response) {
+            console.log(response);
+            })
+            
         }
     },
-    mounted() {}
+    mounted() {
+        this.getOrder()
+    }
 };
 </script>
 

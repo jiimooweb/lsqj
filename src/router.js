@@ -48,7 +48,14 @@ const routes = [
     name: 'orderDetail',
     component: () => import('./views/orderDetail'),
     meta: {
-      title: '订单'
+      title: '订单详情'
+    }
+  },
+  {
+    name: 'share',
+    component: () => import('./views/share'),
+    meta: {
+      title: '分享'
     }
   }
 ];
