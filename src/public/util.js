@@ -2,6 +2,7 @@
 import {router} from '../router'
 import Vue from 'vue'
 import axios from 'axios'
+
 import VueAxios from 'vue-axios'
 // Vue.use(VueAxios, axios)
 class Token {
@@ -40,7 +41,7 @@ class Token {
 
     getToken(){
         //3、重新获取token
-        var url = encodeURIComponent('http://localhost:8080/#'+router.history.current.fullPath)
+        var url = encodeURIComponent('http://localhost:8081/#'+router.history.current.fullPath)
         location.href = 'https://www.rdoorweb.com/lvshui/public/wechat/oauth?url=' + url
     }
     

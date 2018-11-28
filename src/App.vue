@@ -55,11 +55,9 @@ export default {
         }
     },
     mounted() {
-        // token.initToken(this.$route.query.token)
         this.returnShowTabbar()
     },
     methods: {
-        
         returnShowTabbar(){
             for(let i=0;i<this.showItem.length;i++){
                 if(this.showItem[i] === this.$router.history.current.name){
