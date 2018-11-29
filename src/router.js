@@ -57,6 +57,13 @@ const routes = [
     meta: {
       title: '分享'
     }
+  },
+  {
+    name: 'shareManage',
+    component: () => import('./views/shareManage'),
+    meta: {
+      title: '分享任务管理'
+    }
   }
 ];
 

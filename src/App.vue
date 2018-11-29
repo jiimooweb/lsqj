@@ -45,7 +45,8 @@ export default {
 
             //不需要添加tabbar的路由name
             showItem:[
-                'share'
+                'share',
+                'shareManage'
             ]
         }
     },
