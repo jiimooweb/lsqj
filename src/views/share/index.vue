@@ -269,7 +269,7 @@ export default {
                 desc: "帮我助力获取免费一次采摘名额", // 分享描述
                 link: "https://zhlsqj.com/#/share?id=" + this.userData.id, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
                 imgUrl:
-                    "//img.yzcdn.cn/public_files/2017/12/18/fd78cf6bb5d12e2a119d0576bedfd230.png", // 分享图标
+                    "https://download.rdoorweb.com/WechatIMG9564.jpeg", // 分享图标
                 success: function() {
                     // 设置成功
                     console.log("设置成功");
