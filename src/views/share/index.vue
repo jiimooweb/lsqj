@@ -51,7 +51,8 @@
                 <div
                     class="helpList-item"
                     v-for="(item,index) in helpList"
-                    :key="index" v-if="helpList.length > 0"
+                    :key="index"
+                    v-if="helpList.length > 0"
                 >
                     <img
                         :src="item.headimgurl"
@@ -59,7 +60,10 @@
                     >
                     <p class="helpList-item-name">{{item.nickname}}</p>
                 </div>
-                <p class="helpList-p" v-else>暂无好友助力</p>
+                <p
+                    class="helpList-p"
+                    v-else
+                >暂无好友助力</p>
             </div>
         </div>
         <div class="shareText">
@@ -116,12 +120,13 @@ export default {
     },
     data() {
         return {
+            isSubscribe:0,
             userDataShow: false,
             userCurrentData: {
                 name: "",
                 phone: ""
             },
-            shareNum:1,
+            shareNum: 1,
             url: "https://zhlsqj.com/",
             shareType: "share", //share 任务未开始 record 任务已完成 over填写完资料
             pageShow: false,
@@ -148,32 +153,35 @@ export default {
             ]
         };
     },
+    watch:{
+        $route(to,from){
+            this.getShowAndBeShow()
+        },
+        pjtToken(){
+            this.getShowAndBeShow()
+        }
+    },
     methods: {
         init() {
-            console.log('init');
-            
+            console.log("init");
             token.initToken(this.$route.query.token);
-            this.getShowAndBeShow();
+            this.getShowAndBeShow()
         },
         showFix(i) {
             this.fixDisplay = i;
         },
         getShowAndBeShow() {
-            console.log('getShowAndBeShow');
-            
             if (
                 this.$route.query.id != undefined &&
                 this.userData.id != this.$route.query.id
             ) {
                 //被分享着进入
-                console.log('被分享');
-                
                 axios
                     .request({
                         url: this.url + "share/wx/beshow",
                         method: "post",
                         headers: {
-                            token: localStorage.getItem("token")
+                            token: localStorage.getItem("token") || this.$route.query.token
                         },
                         data: {
                             share_id: this.$route.query.id
@@ -181,15 +189,13 @@ export default {
                     })
                     .then(res => {
                         this.shareType = res.data.data.flag;
-                        this.shareNum = res.data.data.task_target
+                        this.shareNum = res.data.data.task_target;
                         this.indexData.nickname =
                             res.data.data.share_data.nickname;
                         this.indexData.headimgurl =
                             res.data.data.share_data.headimgurl;
                         this.indexData.id = res.data.data.share_data.id;
                         this.indexData.admin = res.data.data.share_data.admin;
-                        console.log(1);
-                        this.getUesr();
                         this.helpList = [];
                         for (let i = 0; i < res.data.data.share.length; i++) {
                             this.helpList.push(res.data.data.share[i].beshare);
@@ -197,23 +203,21 @@ export default {
                         this.pageShow = true;
                     })
                     .catch(err => {
-                        console.log(err);
                         token.getToken();
                     });
             } else {
                 //分享者进入
-                console.log('分享');
                 axios
                     .request({
                         url: this.url + "share/wx/show",
                         method: "post",
                         headers: {
-                            token: localStorage.getItem("token")
+                            token: localStorage.getItem("token") || this.$route.query.token
                         }
                     })
                     .then(res => {
                         this.shareType = res.data.data.flag;
-                        this.shareNum = res.data.data.task_target
+                        this.shareNum = res.data.data.task_target;
 
                         this.indexData.nickname =
                             res.data.data.share_data.nickname;
@@ -221,21 +225,18 @@ export default {
                             res.data.data.share_data.headimgurl;
                         this.indexData.id = res.data.data.share_data.id;
                         this.indexData.admin = res.data.data.share_data.admin;
-                        console.log(2);
-                        
-                        this.getUesr();
                         this.helpList = [];
                         for (let i = 0; i < res.data.data.share.length; i++) {
                             this.helpList.push(res.data.data.share[i].beshare);
                         }
                         this.pageShow = true;
+                        
                     })
                     .catch(err => {
-                        console.log(err);
-                        
                         token.getToken();
                     });
             }
+            this.getUesr();
         },
         getUesr() {
             axios
@@ -243,19 +244,16 @@ export default {
                     url: this.url + "user",
                     method: "get",
                     headers: {
-                        token: localStorage.getItem("token")
+                        token: localStorage.getItem("token") || this.$route.query.token
                     }
                 })
                 .then(res => {
-                    console.log('getUser success');
+                    this.isSubscribe = res.data.data.subscribe
                     this.userData.nickname = res.data.data.nickname;
                     this.userData.headimgurl = res.data.data.headimgurl;
                     this.userData.id = res.data.data.id;
                     this.userData.admin = res.data.data.admin;
-                    // console.log(userData.id);
-                    // console.log(this.$route.query.id);
-                    // console.log(userData.id === this.$route.query.id);
-                    
+                    this.pageShow = true;
                     this.imgShow = true;
                     this.fx();
                 })
@@ -268,8 +266,7 @@ export default {
                 title: "绿水清江免费采摘活动", // 分享标题
                 desc: "帮我助力获取免费一次采摘名额", // 分享描述
                 link: "https://zhlsqj.com/#/share?id=" + this.userData.id, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-                imgUrl:
-                    "https://download.rdoorweb.com/WechatIMG9564.jpeg", // 分享图标
+                imgUrl: "https://download.rdoorweb.com/WechatIMG9564.jpeg", // 分享图标
                 success: function() {
                     // 设置成功
                     console.log("设置成功");
@@ -281,6 +278,10 @@ export default {
             this.userDataShow = i;
         },
         getFollow() {
+            if(this.isSubscribe === 0){
+                Toast.fail("请先关注‘绿水清江’公众号");
+                return
+            }
             axios
                 .request({
                     url: this.url + "share/follow",
@@ -293,36 +294,47 @@ export default {
                     }
                 })
                 .then(res => {
-                    this.getShowAndBeShow()
+                    this.getShowAndBeShow();
                     Toast.success("已为他助力");
                 });
         },
         inputData() {
-            console.log('提交信息');
+            console.log("提交信息");
+            if(this.isSubscribe === 0){
+                Toast.fail("请先关注‘绿水清江’公众号");
+                return
+            }
             //提交信息
-            if(this.userCurrentData.name !== '' && this.userCurrentData.phone !== ''){
+            if (
+                this.userCurrentData.name !== "" &&
+                this.userCurrentData.phone !== ""
+            ) {
                 axios
-                .request({
-                    url: this.url + "share/over/register",
-                    method: "post",
-                    headers: {
-                        token: localStorage.getItem("token")
-                    },
-                    data: {
-                        name: this.userCurrentData.name,
-                        contact_way: this.userCurrentData.phone
-                    }
-                })
-                .then(res => {
-                    this.getShowAndBeShow()
-                    Toast.success("已为填写资料");
-                });
-            }else{
+                    .request({
+                        url: this.url + "share/over/register",
+                        method: "post",
+                        headers: {
+                            token: localStorage.getItem("token")
+                        },
+                        data: {
+                            name: this.userCurrentData.name,
+                            contact_way: this.userCurrentData.phone
+                        }
+                    })
+                    .then(res => {
+                        this.getShowAndBeShow();
+                        Toast.success("已为填写资料");
+                    });
+            } else {
                 Toast.fail("资料不完整");
             }
+        },
+        subscribeReturn(){
+
         }
     },
     mounted() {
+        this.pjtToken = this.$route.query.token
         this.init();
     }
 };
@@ -334,7 +346,7 @@ export default {
     margin: 0 auto;
 }
 .shareFix {
-    position: absolute;
+    position: fixed;
     top: 0;
     width: 100%;
     height: 100%;
@@ -409,7 +421,7 @@ export default {
         width: 90%;
         margin: 0 auto;
         overflow: hidden;
-        &-p{
+        &-p {
             color: #999;
             font-size: 14px;
         }

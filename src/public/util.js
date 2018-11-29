@@ -1,9 +1,6 @@
 
 import {router} from '../router'
-import Vue from 'vue'
 import axios from 'axios'
-
-import VueAxios from 'vue-axios'
 // Vue.use(VueAxios, axios)
 class Token {
     constructor(){
@@ -34,6 +31,7 @@ class Token {
         }).then(res=>{
             // console.log(res);
         }).catch(err=>{
+            // alert('重新获取token')
             localStorage.setItem('hasToken','过期')
             localStorage.clear('token')
             // return
@@ -43,7 +41,6 @@ class Token {
     }
 
     getToken(){
-        // return
         localStorage.clear('token')
         //3、重新获取token
         // var url = encodeURIComponent('https://zhlsqj.com/#'+router.history.current.path)
@@ -53,17 +50,21 @@ class Token {
         }else{
             this.url = encodeURIComponent('https://zhlsqj.com/#'+router.history.current.path)
         }
+        localStorage.setItem('url',this.url)
         location.href = 'https://zhlsqj.com/wechat/oauth?url=' + this.url
     }
     
     initToken(tooken){
         if(this.localStorageHasToken()){
+            // alert('缓存有token')
             this.token = localStorage.getItem('token')
             this.verifyToken()
         }else if(this.linkHasToken(tooken)){
+            // alert('连接有token')
             localStorage.setItem('token',tooken)
         }else{
             // return
+            // alert('啥token都没有')
             this.getToken()
         }
     }
