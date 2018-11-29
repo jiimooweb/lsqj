@@ -24,7 +24,7 @@ class Token {
         //wechat/verify
         //post
         axios.request({
-            url:'https://www.rdoorweb.com/lvshui/public/wechat/verify',
+            url:'https://zhlsqj.com/wechat/verify',
             method:'post',
             headers:{
                 token:this.token
@@ -41,8 +41,8 @@ class Token {
 
     getToken(){
         //3、重新获取token
-        var url = encodeURIComponent('http://localhost:8081/#'+router.history.current.fullPath)
-        location.href = 'https://www.rdoorweb.com/lvshui/public/wechat/oauth?url=' + url
+        var url = encodeURIComponent('https://zhlsqj.com/#'+router.history.current.fullPath)
+        location.href = 'https://zhlsqj.com/wechat/oauth?url=' + url
     }
     
     initToken(tooken){

@@ -10,7 +10,7 @@ class wxApi{
     }
     getWxConfig(token){
         axios.request({
-            url:'https://www.rdoorweb.com/lvshui/public/config',
+            url:'https://zhlsqj.com/config',
             method:'get',
             headers:{
                 token:token
