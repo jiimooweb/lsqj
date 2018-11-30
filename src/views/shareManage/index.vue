@@ -1,23 +1,40 @@
 <template>
-    <div>
+    <div class="listPage">
         <van-list
             v-model="loading"
             :finished="finished"
             finished-text="没有更多了"
             @load="onLoad"
         >
-            <div v-for="(item,index) in list" class="listItem"
-                :key="index">
+            <div
+                v-for="(item,index) in list"
+                class="listItem"
+                :key="index"
+            >
                 <p class="listItem-name">{{item.name}}</p>
-                <van-button type="primary" size='small' style="listItem-btn" v-if="item.flag!==1" :disabled='item.flag===1'>领取奖励</van-button>
-                <van-button type="primary" size='small' style="listItem-btn" v-else :disabled='item.flag===1'>已经领取</van-button>
+                <p class="listItem-name">{{item.contact_way}}</p>
+                <van-button
+                    type="primary"
+                    size='small'
+                    class="listItem-btn"
+                    @click='onpenCheck(index)'
+                    v-if="item.flag!==1"
+                    :disabled='item.flag===1'
+                >领取奖励</van-button>
+                <van-button
+                    type="primary"
+                    size='small'
+                    class="listItem-btn"
+                    v-else
+                    :disabled='item.flag===1'
+                >已经领取</van-button>
             </div>
         </van-list>
     </div>
 </template>
 
 <script>
-import { Cell, CellGroup, List, Button } from "vant";
+import { Toast, Dialog, Cell, CellGroup, List, Button } from "vant";
 import axios from "axios";
 
 import Token from "../../public/util.js";
@@ -27,73 +44,123 @@ export default {
         [List.name]: List,
         [Button.name]: Button,
         [Cell.name]: Cell,
-        [CellGroup.name]: CellGroup
+        [CellGroup.name]: CellGroup,
+        [Toast.name]: Toast,
+        [Dialog.name]: Dialog
     },
     data() {
         return {
-            url:'https://zhlsqj.com/',
+            url: "https://zhlsqj.com/",
             list: [],
-            loadingNum:0,
-            loadingList:[],
+            loadingNum: 0,
+            loadingList: [],
             loading: false,
             finished: false
         };
     },
-    methods:{
-        onLoad(){
-            for(let i=this.loadingNum;i<this.loadingNum + 10;i++){
-                this.list.push(this.loadingList[i])
-            }
-            this.loading = false
-        },
-        getList(){
-            console.log(2);
-            
-            axios.request({
-                url: this.url + 'share/over/show',
-                method:'post',
-                headers:{
-                    token:localStorage.getItem('token')
-                },
-                data:{
-                    
+    methods: {
+        onLoad() {
+            setTimeout(() => {
+                let num = this.loadingNum;
+                for (let i = num; i < num + 10; i++) {
+                    if (this.loadingNum >= this.loadingList.length) {
+                        this.finished = true;
+                        this.loading = false;
+                        return
+                    }
+                    this.list.push(this.loadingList[i]);
+                    this.loadingNum += 1;
                 }
-            }).then(res=>{
-                this.loadingList = res.data.data
-                this.list = []
-                this.loadingList = []
-                this.loading = true
-                this.onLoad()
-                console.log(this.loadingList);
-                
+                // 加载状态结束
+                this.loading = false;
+
+                // 数据全部加载完成
+            }, 1500);
+        },
+        getList() {
+            axios
+                .request({
+                    url: this.url + "share/over/show",
+                    method: "post",
+                    headers: {
+                        token: localStorage.getItem("token")
+                    },
+                    data: {}
+                })
+                .then(res => {
+                    this.list = [];
+                    this.loadingList = [];
+                    this.loadingList = res.data.data;
+                    this.loading = true;
+                    this.onLoad();
+                });
+        },
+        onpenCheck(index) {
+            Dialog.confirm({
+                title: "核销",
+                message: "是否确认-" + this.list[index].name + "-使用奖励"
             })
+                .then(() => {
+                    this.check(index);
+                })
+                .catch(() => {
+                    // on cancel
+                });
+        },
+        check(index) {
+            axios
+                .request({
+                    url: this.url + "share/over/check-register",
+                    method: "post",
+                    headers: {
+                        token: localStorage.getItem("token")
+                    },
+                    data: {
+                        fan_id: this.list[index].fan_id
+                    }
+                })
+                .then(res => {
+                    this.list[index].flag = 1
+                    Toast.success("成功核销");
+                });
         }
     },
-    mounted(){
+    mounted() {
         token.initToken(this.$route.query.token);
-        this.getList()
+        this.getList();
     }
 };
 </script>
 
 <style lang='less'>
-    .listItem{
-        border-bottom:1px solid #ddd;
-        margin: 0 auto;
-        width: 90%;
-        overflow: hidden;
-        &-name{
-            font-size: 14px;
-            text-align: left;
-            float: left;
-            line-height: 28px;
-            padding: 0 10px;
-            display: block;
-            width: 50%;
-        }
-        &-btn{
-            float: right;
-            display: block;
-        }
+.listPage {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+.listItem {
+    border-bottom: 1px solid #ddd;
+    margin: 0 auto;
+    width: 90%;
+    overflow: hidden;
+    &-name {
+        overflow: hidden; //超出的文本隐藏
+        text-overflow: ellipsis; //溢出用省略号显示
+        white-space: nowrap; //溢出不换行
+        font-size: 14px;
+        text-align: left;
+        float: left;
+        line-height: 28px;
+        display: block;
+        width: 30%;
     }
+    &-btn {
+        width: 30%;
+        margin-top: 12.5px;
+        float: right;
+        display: block;
+    }
+}
 </style>

@@ -3,6 +3,9 @@
         class="sharePage"
         v-if="pageShow"
     >
+    <div class="intoAdmin" v-if="isAdmin !== 0">
+        <van-button type="primary" size='small' class="admin-btn" @click="returnAdmin()">管理员</van-button>
+    </div>
         <div class="userImg">
             <img
                 :src="indexData.headimgurl"
@@ -120,6 +123,7 @@ export default {
     },
     data() {
         return {
+            isAdmin:0,
             isSubscribe:0,
             userDataShow: false,
             userCurrentData: {
@@ -131,6 +135,12 @@ export default {
             shareType: "share", //share 任务未开始 record 任务已完成 over填写完资料
             pageShow: false,
             fixDisplay: false,
+
+            configData:{
+                img:'',
+                introduce:'',
+                name:''
+            },
 
             imgShow: false,
             indexData: {
@@ -189,7 +199,10 @@ export default {
                     })
                     .then(res => {
                         this.shareType = res.data.data.flag;
-                        this.shareNum = res.data.data.task_target;
+                        this.shareNum = res.data.data.task.task_target;
+                        this.configData.img = res.data.data.task.img
+                        this.configData.introduce = res.data.data.task.introduce
+                        this.configData.name = res.data.data.task.name
                         this.indexData.nickname =
                             res.data.data.share_data.nickname;
                         this.indexData.headimgurl =
@@ -201,6 +214,7 @@ export default {
                             this.helpList.push(res.data.data.share[i].beshare);
                         }
                         this.pageShow = true;
+                        this.getUesr();
                     })
                     .catch(err => {
                         token.getToken();
@@ -217,8 +231,10 @@ export default {
                     })
                     .then(res => {
                         this.shareType = res.data.data.flag;
-                        this.shareNum = res.data.data.task_target;
-
+                        this.shareNum = res.data.data.task.task_target;
+                        this.configData.img = res.data.data.task.img
+                        this.configData.introduce = res.data.data.task.introduce
+                        this.configData.name = res.data.data.task.name
                         this.indexData.nickname =
                             res.data.data.share_data.nickname;
                         this.indexData.headimgurl =
@@ -230,13 +246,13 @@ export default {
                             this.helpList.push(res.data.data.share[i].beshare);
                         }
                         this.pageShow = true;
-                        
+                        this.getUesr();
                     })
                     .catch(err => {
                         token.getToken();
                     });
             }
-            this.getUesr();
+            
         },
         getUesr() {
             axios
@@ -248,6 +264,7 @@ export default {
                     }
                 })
                 .then(res => {
+                    this.isAdmin = (res.data.data.admin === null?0:1)
                     this.isSubscribe = res.data.data.subscribe
                     this.userData.nickname = res.data.data.nickname;
                     this.userData.headimgurl = res.data.data.headimgurl;
@@ -255,24 +272,27 @@ export default {
                     this.userData.admin = res.data.data.admin;
                     this.pageShow = true;
                     this.imgShow = true;
-                    this.fx();
+                    this.fx(this.$route.path);
                 })
                 .catch(res => {
                     token.getToken();
                 });
         },
-        fx() {
+        fx(path) {
+            // alert('开始设置config')
             let config = {
-                title: "绿水清江免费采摘活动", // 分享标题
-                desc: "帮我助力获取免费一次采摘名额", // 分享描述
+                title: this.configData.name, // 分享标题
+                desc: this.configData.introduce, // 分享描述
                 link: "https://zhlsqj.com/#/share?id=" + this.userData.id, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-                imgUrl: "https://download.rdoorweb.com/WechatIMG9564.jpeg", // 分享图标
+                imgUrl: this.configData.img, // 分享图标
                 success: function() {
-                    // 设置成功
-                    console.log("设置成功");
+                    // 分享成功
+                    Toast.success("分享成功");
                 }
             };
-            wxa.wxInit(localStorage.getItem("token"), config);
+            console.log(config);
+            
+            wxa.wxInit(localStorage.getItem("token"), config,path);
         },
         showUserModal(i) {
             this.userDataShow = i;
@@ -329,8 +349,8 @@ export default {
                 Toast.fail("资料不完整");
             }
         },
-        subscribeReturn(){
-
+        returnAdmin(){
+            this.$router.push({name:'shareManage'})
         }
     },
     mounted() {
@@ -344,6 +364,16 @@ export default {
 .btnPage {
     width: 70%;
     margin: 0 auto;
+}
+.intoAdmin{
+    .admin-btn{
+        display: block;
+        background: #409eff;
+        float: right;
+        margin-top: 10px;
+        margin-right: 10px;
+        border: 1px solid #409eff;
+    }
 }
 .shareFix {
     position: fixed;

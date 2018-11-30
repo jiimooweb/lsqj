@@ -9,7 +9,9 @@ class Token {
     }
     localStorageHasToken(){
         //1、查看缓存是否有token
-        return !(localStorage.getItem('token') == null) && !(typeof(localStorage.getItem('token')) != "undefined")
+        // console.log(!(localStorage.getItem('token') == null) && typeof(localStorage.getItem('token')) != "undefined");
+        
+        return !(localStorage.getItem('token') == null) && typeof(localStorage.getItem('token')) != "undefined"
     }
     
     linkHasToken(tooken){
@@ -30,6 +32,7 @@ class Token {
             data:{}
         }).then(res=>{
             // console.log(res);
+            // alert('token没过期')
         }).catch(err=>{
             // alert('重新获取token')
             localStorage.setItem('hasToken','过期')
@@ -46,10 +49,16 @@ class Token {
         // var url = encodeURIComponent('https://zhlsqj.com/#'+router.history.current.path)
         // var url = encodeURIComponent('http://localhost:8081/#'+router.history.current.path)
         if(router.history.current.query.id){
-            this.url = encodeURIComponent('https://zhlsqj.com/#'+router.history.current.path+'?id='+router.history.current.query.id)
+            this.url = encodeURIComponent('http://localhost:8081/#'+router.history.current.path+'?id='+router.history.current.query.id)
         }else{
-            this.url = encodeURIComponent('https://zhlsqj.com/#'+router.history.current.path)
+            this.url = encodeURIComponent('http://localhost:8081/#'+router.history.current.path)
         }
+
+        // if(router.history.current.query.id){
+        //     this.url = encodeURIComponent('https://zhlsqj.com/#'+router.history.current.path+'?id='+router.history.current.query.id)
+        // }else{
+        //     this.url = encodeURIComponent('https://zhlsqj.com/#'+router.history.current.path)
+        // }
         localStorage.setItem('url',this.url)
         location.href = 'https://zhlsqj.com/wechat/oauth?url=' + this.url
     }

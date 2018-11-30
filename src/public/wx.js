@@ -4,21 +4,22 @@ class wxApi{
     constructor(){
         
     }
-    wxInit(token,config){
+    wxInit(token,config,path){
         //初始化微信设置
         // console.log(config);
         
-        this.getWxConfig(token,config)
+        this.getWxConfig(token,config,path)
     }
-    getWxConfig(token,config){
+    getWxConfig(token,config,path){
         axios.request({
-            url:'https://zhlsqj.com/config',
+            url:'https://zhlsqj.com/wechat/config',
             method:'get',
             headers:{
-                token:token
+                token:token,
+                url:'https://zhlsqj.com/#'+path
             }
         }).then(res=>{
-            // console.log(res.data.jssdk);
+            console.log(res.data.jssdk);
             
             this.wxConfig(res.data.jssdk)
             this.wxReader(config)
@@ -36,10 +37,12 @@ class wxApi{
     }
     share(config){
         //分享给朋友、qq、朋友圈、qq空间
+        
         wx.updateAppMessageShareData(config);
         wx.updateTimelineShareData(config);
         wx.onMenuShareAppMessage(config);
-        wx.onMenuShareTimeline(config)
+        wx.onMenuShareTimeline(config);
+        
     }
 }
 
