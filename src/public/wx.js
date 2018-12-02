@@ -16,6 +16,7 @@ class wxApi{
             method:'get',
             headers:{
                 token:token,
+                // url:'https://zhlsqj.com'
                 url:'https://zhlsqj.com/#'+path
             }
         }).then(res=>{

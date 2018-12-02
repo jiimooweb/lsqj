@@ -7,9 +7,9 @@
             >
                 <van-swipe-item
                     v-for="imgs in goods.imgs"
-                    :key="imgs"
+                    :key="imgs.id"
                 >
-                    <img :src="imgs">
+                    <img :src="imgs.url" class="goods-swipe-img">
                 </van-swipe-item>
             </van-swipe>
 
@@ -26,11 +26,7 @@
             </van-cell-group>
             <van-cell-group class="goods-cell-group">
                 <van-cell title="查看商品详情" />
-                <p>{{goods.content}}</p>
-                <img
-                    width="100%"
-                    src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2555138269,3303889194&fm=27&gp=0.jpg"
-                >
+                <div v-html="goods.content" class="goods-cell-group-content"></div>
             </van-cell-group>
         </div>
         <van-goods-action class="goods-click">
@@ -136,6 +132,8 @@ export default {
                 .then(res => {
                     console.log(res);
                     this.goods = res.data.data[0]
+                    console.log(this.goods.imgs);
+                    
                 });
         }
     },
@@ -156,6 +154,7 @@ export default {
         overflow-x: hidden;
         overflow-y: scroll;
         &-swipe {
+            // max-height: 300px;
             img {
                 width: 100%;
                 display: block;
@@ -178,7 +177,9 @@ export default {
 
         &-cell-group {
             margin: 15px 0;
-
+            &-content{
+                padding: 0 15px;
+            }
             .van-cell__value {
                 color: #999;
             }

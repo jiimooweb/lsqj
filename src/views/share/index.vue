@@ -4,8 +4,9 @@
         v-if="pageShow"
     >
     <div class="intoAdmin" v-if="isAdmin !== 0">
-        <van-button type="primary" size='small' class="admin-btn" @click="returnAdmin()">管理员</van-button>
+        <van-button type="primary" size='small' class="admin-btn" @click="returnAdmin()"></van-button>
     </div>
+    <div class="page1">
         <div class="userImg">
             <img
                 :src="indexData.headimgurl"
@@ -46,8 +47,11 @@
                 class="shareBtn"
                 size="large"
                 v-if="shareType === 'over'"
+                disabled
             >资料已填写</van-button>
         </div>
+    </div>
+    <div class="page2">
         <div class="shareMember">
             <p class="memberText">助力好友</p>
             <div class="helpList">
@@ -69,6 +73,8 @@
                 >暂无好友助力</p>
             </div>
         </div>
+    </div>
+    <div class="page3">
         <div class="shareText">
             <p>活动细则</p>
             <p>1、每个人只能为每位好友各助力一次</p>
@@ -79,6 +85,10 @@
             <p>6、到店时与店员确认使用该次机会</p>
         </div>
         <p class="shareTip">本活动最终解释权归绿水清江所有</p>
+    </div>
+        
+        
+        
         <div
             class="shareFix"
             v-if="fixDisplay"
@@ -361,18 +371,43 @@ export default {
 </script>
 
 <style lang="less">
+.page1{
+    overflow: hidden;
+    width: 100%;
+    background: url(../../assets/shareBg.jpg) no-repeat center 0;
+    background-size: 100% auto;
+}
+.page2{
+    width: 100%;
+    background: #fff;
+    overflow: hidden;
+}
+.page3{
+    padding-bottom: 70px;
+    overflow: hidden;
+    width: 100%;
+    background: url(../../assets/shareBg.jpg) no-repeat center bottom;
+    background-size: 100% auto;
+}
 .btnPage {
     width: 70%;
     margin: 0 auto;
 }
 .intoAdmin{
+    position: absolute;
+    width: 100%;
     .admin-btn{
         display: block;
-        background: #409eff;
+        // background: #409eff;
+        width: 78px;
+        height: 42px;
+        border: none;
+        background: url(../../assets/btnbg.png) no-repeat center;
+        background-size: 78px 42px;
         float: right;
         margin-top: 10px;
         margin-right: 10px;
-        border: 1px solid #409eff;
+        // border: 1px solid #409eff;
     }
 }
 .shareFix {
@@ -392,8 +427,8 @@ export default {
     width: 100%;
     min-height: 100%;
     position: absolute;
-    background: url(../../assets/shareBg.jpg) no-repeat center 0 #00963d;
-    background-size: 100% auto;
+    // background: url(../../assets/shareBg.jpg) space  center 0;
+    // background-size: 100% auto;
 }
 .userImg {
     overflow: hidden;
@@ -401,7 +436,7 @@ export default {
     height: 80px;
     margin: 0 auto;
     border-radius: 50%;
-    margin-top: 230px;
+    margin-top: 260px;
     border: 1px solid #fff;
     background: #fff;
 }
@@ -420,7 +455,7 @@ export default {
 .shareText {
     width: 80%;
     padding: 5px 0 5px;
-    margin: 0 auto;
+    margin: 50px auto 0;
     border-radius: 8px;
     background: #fff;
 }
@@ -439,11 +474,11 @@ export default {
 }
 .shareMember {
     width: 80%;
+    border: 1px solid #ddd;
     padding: 5px 0 5px;
-    margin: 0 auto;
     border-radius: 8px;
     background: #fff;
-    margin: 0 auto 20px;
+    margin: 30px auto 20px;
     .memberText {
         font-size: 14px;
     }
