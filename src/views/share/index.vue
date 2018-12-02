@@ -8,6 +8,7 @@
     </div>
     <van-popup v-model="noSubscribe" class="subscribeModal" :close-on-click-overlay='false'>
         <p class="qrcodeText">请先关注‘绿水清江’公众号</p>
+        <p class="qrcodeText">(关注后请刷新本页面)</p>
         <img src="../../assets/qrcode.jpg" class="qrcode">
     </van-popup>
     <div class="page1">
@@ -65,7 +66,7 @@
                     :key="index"
                 >
                     <img
-                        :src="item.headimgurl?item.headimgurl:''"
+                        :src="item.headimgurl"
                         class="helpList-item-img"
                     >
                     <p class="helpList-item-name">{{item.nickname}}</p>
@@ -325,7 +326,7 @@ export default {
             }
             axios
                 .request({
-                    url: this.url + "share/follow",
+                    url: "share/follow",
                     method: "post",
                     headers: {
                         token: localStorage.getItem("token")
@@ -518,7 +519,7 @@ export default {
             font-size: 14px;
         }
         &-item {
-            width: calc((100% / 3) - 15px);
+            width: calc((100% / 4) - 15px);
             float: left;
             margin: 0 5px 0 10px;
             &-img {

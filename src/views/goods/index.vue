@@ -142,14 +142,12 @@ export default {
                 .then(res => {
                     console.log(process.env.NODE_ENV);
                     this.goods = res.data[0];
-
                     this.goodsShow = true;
                 });
         },
         addCart(){
             //存入缓存购物车
-            let cartList = JSON.parse()
-            localStorage.se
+            let cartList = JSON.parse(localStorage.getItem('cartList'))
         }
     },
     mounted() {
