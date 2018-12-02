@@ -17,10 +17,10 @@ class wxApi{
             headers:{
                 token:token,
                 // url:'https://zhlsqj.com'
-                url:'https://zhlsqj.com/#'+path
+                url: path
             }
         }).then(res=>{
-            console.log(res.data.jssdk);
+            // console.log(res.data.jssdk);
             
             this.wxConfig(res.data.jssdk)
             this.wxReader(config)

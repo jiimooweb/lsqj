@@ -35,8 +35,7 @@
 
 <script>
 import { Toast, Dialog, Cell, CellGroup, List, Button } from "vant";
-import axios from "axios";
-
+import axios from "../../public/axios.js";
 import Token from "../../public/util.js";
 const token = new Token();
 export default {
@@ -50,7 +49,6 @@ export default {
     },
     data() {
         return {
-            url: "https://zhlsqj.com/",
             list: [],
             loadingNum: 0,
             loadingList: [],
@@ -80,7 +78,7 @@ export default {
         getList() {
             axios
                 .request({
-                    url: this.url + "share/over/show",
+                    url: "share/over/show",
                     method: "post",
                     headers: {
                         token: localStorage.getItem("token")
@@ -90,7 +88,7 @@ export default {
                 .then(res => {
                     this.list = [];
                     this.loadingList = [];
-                    this.loadingList = res.data.data;
+                    this.loadingList = res.data;
                     this.loading = true;
                     this.onLoad();
                 });
@@ -110,7 +108,7 @@ export default {
         check(index) {
             axios
                 .request({
-                    url: this.url + "share/over/check-register",
+                    url: "share/over/check-register",
                     method: "post",
                     headers: {
                         token: localStorage.getItem("token")

@@ -1,6 +1,7 @@
 
 import {router} from '../router'
 import axios from 'axios'
+import env from '../../config/env'
 // Vue.use(VueAxios, axios)
 class Token {
     constructor(){
@@ -46,22 +47,20 @@ class Token {
     getToken(){
         localStorage.clear('token')
         //3、重新获取token
-        // var url = encodeURIComponent('https://zhlsqj.com/#'+router.history.current.path)
-        // var url = encodeURIComponent('http://localhost:8081/#'+router.history.current.path)
-
-        //本地测试使用
-        // if(router.history.current.query.id){
-        //     this.url = encodeURIComponent('http://localhost:8082/#'+router.history.current.path+'?id='+router.history.current.query.id)
-        // }else{
-        //     this.url = encodeURIComponent('http://localhost:8082/#'+router.history.current.path)
-        // }
-
-
-        //上传服务器使用
-        if(router.history.current.query.id){
-            this.url = encodeURIComponent('https://zhlsqj.com/#'+router.history.current.path+'?id='+router.history.current.query.id)
+        if(env === 'development'){
+            //本地测试使用
+            if(router.history.current.query.id){
+                this.url = encodeURIComponent('http://localhost:8082/#'+router.history.current.path+'?id='+router.history.current.query.id)
+            }else{
+                this.url = encodeURIComponent('http://localhost:8082/#'+router.history.current.path)
+            }
         }else{
-            this.url = encodeURIComponent('https://zhlsqj.com/#'+router.history.current.path)
+            //上传服务器使用
+            if(router.history.current.query.id){
+                this.url = encodeURIComponent('https://zhlsqj.com/#'+router.history.current.path+'?id='+router.history.current.query.id)
+            }else{
+                this.url = encodeURIComponent('https://zhlsqj.com/#'+router.history.current.path)
+            }
         }
         localStorage.setItem('url',this.url)
         location.href = 'https://zhlsqj.com/wechat/oauth?url=' + this.url

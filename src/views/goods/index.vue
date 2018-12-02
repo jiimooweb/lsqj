@@ -1,6 +1,9 @@
 <template>
     <div class="goods_page">
-        <div class="goods">
+        <div
+            class="goods"
+            v-if="goodsShow"
+        >
             <van-swipe
                 class="goods-swipe"
                 :autoplay="3000"
@@ -9,7 +12,10 @@
                     v-for="imgs in goods.imgs"
                     :key="imgs.id"
                 >
-                    <img :src="imgs.url" class="goods-swipe-img">
+                    <img
+                        :src="imgs.url"
+                        class="goods-swipe-img"
+                    >
                 </van-swipe-item>
             </van-swipe>
 
@@ -26,7 +32,10 @@
             </van-cell-group>
             <van-cell-group class="goods-cell-group">
                 <van-cell title="查看商品详情" />
-                <div v-html="goods.content" class="goods-cell-group-content"></div>
+                <div
+                    v-html="goods.content"
+                    class="goods-cell-group-content"
+                ></div>
             </van-cell-group>
         </div>
         <van-goods-action class="goods-click">
@@ -65,8 +74,10 @@ import {
     GoodsActionBigBtn,
     GoodsActionMiniBtn
 } from "vant";
-import axios from "axios";
+// import axios from "axios";
+import axios from "../../public/axios.js";
 import Token from "../../public/util.js";
+import env from "../../../config/env";
 const token = new Token();
 export default {
     components: {
@@ -84,8 +95,8 @@ export default {
 
     data() {
         return {
+            goodsShow: false,
             goodsId: "4",
-            url: "https://zhlsqj.com/",
             goodsType: 0,
             goods: {
                 name: "美国伽力果（约680g/3个）",
@@ -96,7 +107,7 @@ export default {
                     "https://img.yzcdn.cn/public_files/2017/10/24/e5a5a02309a41f9f5def56684808d9ae.jpeg",
                     "https://img.yzcdn.cn/public_files/2017/10/24/1791ba14088f9c2be8c610d0a6cc0f93.jpeg"
                 ],
-                content:''
+                content: ""
             }
         };
     },
@@ -117,7 +128,6 @@ export default {
             axios
                 .request({
                     url:
-                        this.url +
                         "mall-goods/" +
                         (this.$route.query.id != undefined
                             ? this.$route.query.id
@@ -130,11 +140,16 @@ export default {
                     }
                 })
                 .then(res => {
-                    console.log(res);
-                    this.goods = res.data.data[0]
-                    console.log(this.goods.imgs);
-                    
+                    console.log(process.env.NODE_ENV);
+                    this.goods = res.data[0];
+
+                    this.goodsShow = true;
                 });
+        },
+        addCart(){
+            //存入缓存购物车
+            let cartList = JSON.parse()
+            localStorage.se
         }
     },
     mounted() {
@@ -177,7 +192,7 @@ export default {
 
         &-cell-group {
             margin: 15px 0;
-            &-content{
+            &-content {
                 padding: 0 15px;
             }
             .van-cell__value {

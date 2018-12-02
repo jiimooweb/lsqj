@@ -6,6 +6,10 @@
     <div class="intoAdmin" v-if="isAdmin !== 0">
         <van-button type="primary" size='small' class="admin-btn" @click="returnAdmin()"></van-button>
     </div>
+    <van-popup v-model="noSubscribe" class="subscribeModal" :close-on-click-overlay='false'>
+        <p class="qrcodeText">请先关注‘绿水清江’公众号</p>
+        <img src="../../assets/qrcode.jpg" class="qrcode">
+    </van-popup>
     <div class="page1">
         <div class="userImg">
             <img
@@ -59,17 +63,16 @@
                     class="helpList-item"
                     v-for="(item,index) in helpList"
                     :key="index"
-                    v-if="helpList.length > 0"
                 >
                     <img
-                        :src="item.headimgurl"
+                        :src="item.headimgurl?item.headimgurl:''"
                         class="helpList-item-img"
                     >
                     <p class="helpList-item-name">{{item.nickname}}</p>
                 </div>
                 <p
                     class="helpList-p"
-                    v-else
+                    v-if="helpListLength === 0"
                 >暂无好友助力</p>
             </div>
         </div>
@@ -86,9 +89,6 @@
         </div>
         <p class="shareTip">本活动最终解释权归绿水清江所有</p>
     </div>
-        
-        
-        
         <div
             class="shareFix"
             v-if="fixDisplay"
@@ -116,10 +116,10 @@
 </template>
 
 <script>
-import { Field, Dialog, Toast, Button } from "vant";
+import { Popup, Field, Dialog, Toast, Button } from "vant";
 import Vue from "vue";
 Vue.use(Dialog);
-import axios from "axios";
+import axios from "../../public/axios.js";
 import Token from "../../public/util.js";
 const token = new Token();
 
@@ -129,10 +129,12 @@ export default {
     components: {
         [Button.name]: Button,
         [Toast.name]: Toast,
-        [Field.name]: Field
+        [Field.name]: Field,
+        [Popup.name]: Popup
     },
     data() {
         return {
+            noSubscribe:false,
             isAdmin:0,
             isSubscribe:0,
             userDataShow: false,
@@ -141,7 +143,6 @@ export default {
                 phone: ""
             },
             shareNum: 1,
-            url: "https://zhlsqj.com/",
             shareType: "share", //share 任务未开始 record 任务已完成 over填写完资料
             pageShow: false,
             fixDisplay: false,
@@ -170,7 +171,8 @@ export default {
                     name: 1,
                     url: ""
                 }
-            ]
+            ],
+            helpListLength:0,
         };
     },
     watch:{
@@ -179,6 +181,9 @@ export default {
         },
         pjtToken(){
             this.getShowAndBeShow()
+        },
+        helpList(){
+            this.helpListLength = this.helpList.length
         }
     },
     methods: {
@@ -198,7 +203,7 @@ export default {
                 //被分享着进入
                 axios
                     .request({
-                        url: this.url + "share/wx/beshow",
+                        url: "share/wx/beshow",
                         method: "post",
                         headers: {
                             token: localStorage.getItem("token") || this.$route.query.token
@@ -208,20 +213,20 @@ export default {
                         }
                     })
                     .then(res => {
-                        this.shareType = res.data.data.flag;
-                        this.shareNum = res.data.data.task.task_target;
-                        this.configData.img = res.data.data.task.img
-                        this.configData.introduce = res.data.data.task.introduce
-                        this.configData.name = res.data.data.task.name
+                        this.shareType = res.data.flag;
+                        this.shareNum = res.data.task.task_target;
+                        this.configData.img = res.data.task.img
+                        this.configData.introduce = res.data.task.introduce
+                        this.configData.name = res.data.task.name
                         this.indexData.nickname =
-                            res.data.data.share_data.nickname;
+                            res.data.share_data.nickname;
                         this.indexData.headimgurl =
-                            res.data.data.share_data.headimgurl;
-                        this.indexData.id = res.data.data.share_data.id;
-                        this.indexData.admin = res.data.data.share_data.admin;
+                            res.data.share_data.headimgurl;
+                        this.indexData.id = res.data.share_data.id;
+                        this.indexData.admin = res.data.share_data.admin;
                         this.helpList = [];
-                        for (let i = 0; i < res.data.data.share.length; i++) {
-                            this.helpList.push(res.data.data.share[i].beshare);
+                        for (let i = 0; i < res.data.share.length; i++) {
+                            this.helpList.push(res.data.share[i].beshare);
                         }
                         this.pageShow = true;
                         this.getUesr();
@@ -233,27 +238,27 @@ export default {
                 //分享者进入
                 axios
                     .request({
-                        url: this.url + "share/wx/show",
+                        url: "share/wx/show",
                         method: "post",
                         headers: {
                             token: localStorage.getItem("token") || this.$route.query.token
                         }
                     })
                     .then(res => {
-                        this.shareType = res.data.data.flag;
-                        this.shareNum = res.data.data.task.task_target;
-                        this.configData.img = res.data.data.task.img
-                        this.configData.introduce = res.data.data.task.introduce
-                        this.configData.name = res.data.data.task.name
+                        this.shareType = res.data.flag;
+                        this.shareNum = res.data.task.task_target;
+                        this.configData.img = res.data.task.img
+                        this.configData.introduce = res.data.task.introduce
+                        this.configData.name = res.data.task.name
                         this.indexData.nickname =
-                            res.data.data.share_data.nickname;
+                            res.data.share_data.nickname;
                         this.indexData.headimgurl =
-                            res.data.data.share_data.headimgurl;
-                        this.indexData.id = res.data.data.share_data.id;
-                        this.indexData.admin = res.data.data.share_data.admin;
+                            res.data.share_data.headimgurl;
+                        this.indexData.id = res.data.share_data.id;
+                        this.indexData.admin = res.data.share_data.admin;
                         this.helpList = [];
-                        for (let i = 0; i < res.data.data.share.length; i++) {
-                            this.helpList.push(res.data.data.share[i].beshare);
+                        for (let i = 0; i < res.data.share.length; i++) {
+                            this.helpList.push(res.data.share[i].beshare);
                         }
                         this.pageShow = true;
                         this.getUesr();
@@ -267,22 +272,28 @@ export default {
         getUesr() {
             axios
                 .request({
-                    url: this.url + "user",
+                    url: "user",
                     method: "get",
                     headers: {
                         token: localStorage.getItem("token") || this.$route.query.token
                     }
                 })
                 .then(res => {
-                    this.isAdmin = (res.data.data.admin === null?0:1)
-                    this.isSubscribe = res.data.data.subscribe
-                    this.userData.nickname = res.data.data.nickname;
-                    this.userData.headimgurl = res.data.data.headimgurl;
-                    this.userData.id = res.data.data.id;
-                    this.userData.admin = res.data.data.admin;
+                    this.isAdmin = (res.data.admin === null?0:1)
+                    this.isSubscribe = res.data.subscribe
+                    if(this.isSubscribe === 0){
+                        this.noSubscribe = true
+                    }
+                    this.userData.nickname = res.data.nickname;
+                    this.userData.headimgurl = res.data.headimgurl;
+                    this.userData.id = res.data.id;
+                    this.userData.admin = res.data.admin;
                     this.pageShow = true;
                     this.imgShow = true;
-                    this.fx(this.$route.path);
+                    this.fx(location.href);
+                    // console.log('full');
+                    // console.log(location.href);
+                    
                 })
                 .catch(res => {
                     token.getToken();
@@ -297,7 +308,7 @@ export default {
                 imgUrl: this.configData.img, // 分享图标
                 success: function() {
                     // 分享成功
-                    Toast.success("分享成功");
+                    // Toast.success("分享成功");
                 }
             };
             console.log(config);
@@ -371,6 +382,22 @@ export default {
 </script>
 
 <style lang="less">
+.subscribeModal{
+    width: 80%;
+    padding-bottom: 20px;
+    border-radius: 15px;
+}
+.qrcodeText{
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+}
+.qrcode{
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    height: auto;
+}
 .page1{
     overflow: hidden;
     width: 100%;
