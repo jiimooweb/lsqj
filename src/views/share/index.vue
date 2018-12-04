@@ -3,7 +3,7 @@
         class="sharePage"
         v-if="pageShow"
     >
-    <div class="intoAdmin" v-if="isAdmin !== 0">
+    <div class="intoAdmin" v-if="isAdmin !== 0 || shareType === 'noopen'">
         <van-button type="primary" size='small' class="admin-btn" @click="returnAdmin()"></van-button>
     </div>
     <van-popup v-model="noSubscribe" class="subscribeModal" :close-on-click-overlay='false'>
@@ -16,7 +16,8 @@
         <p class="overText1">联系方式：{{shareOver.contact_way}}</p>
         <p class="overText2">请出示此页面到农场免费采摘一次</p>
     </van-popup>
-    <div class="page1">
+    <p v-if="shareType === 'noopen'">活动已结束</p>
+    <div v-if="shareType !== 'noopen'" class="page1">
         <div class="userImg">
             <img
                 :src="indexData.headimgurl"
@@ -68,7 +69,7 @@
             >任务完成,我也要分享</van-button>
         </div>
     </div>
-    <div class="page2">
+    <div v-if="shareType !== 'noopen'" class="page2">
         <div class="shareMember">
             <p class="memberText">助力好友</p>
             <div class="helpList">
@@ -90,7 +91,7 @@
             </div>
         </div>
     </div>
-    <div class="page3">
+    <div v-if="shareType !== 'noopen'" class="page3">
         <div class="shareText">
             <p>活动细则</p>
             <p>1、每个人只能为每位好友各助力一次</p>
@@ -234,6 +235,11 @@ export default {
                         }
                     })
                     .then(res => {
+                        if(res.data.flag === 'noopen'){
+                            this.shareType = 'noopen'
+                            this.pageShow = true
+                            return
+                        }
                         this.shareType = res.data.flag;
                         this.shareNum = res.data.task.task_target;
                         this.configData.img = res.data.task.img
@@ -253,6 +259,7 @@ export default {
                         this.getUesr();
                     })
                     .catch(err => {
+                        return
                         token.getToken();
                     });
             } else {
@@ -266,6 +273,11 @@ export default {
                         }
                     })
                     .then(res => {
+                        if(res.data.flag === 'noopen'){
+                            this.shareType = 'noopen'
+                            this.pageShow = true
+                            return
+                        }
                         console.log('已执行');
                         this.shareType = res.data.flag;
                         this.shareNum = res.data.task.task_target;
@@ -287,6 +299,7 @@ export default {
                         this.getUesr();
                     })
                     .catch(err => {
+                        return
                         token.getToken();
                     });
             }
@@ -319,6 +332,7 @@ export default {
                     
                 })
                 .catch(res => {
+                    return
                     token.getToken();
                 });
         },

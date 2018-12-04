@@ -1,5 +1,12 @@
 <template>
     <div class="listPage">
+        <van-cell title="任务开关">
+            <van-switch
+            size='20px'
+                v-model="task.status"
+                @change="inputTask()"
+            />
+        </van-cell>
         <van-list
             v-model="loading"
             :finished="finished"
@@ -34,7 +41,7 @@
 </template>
 
 <script>
-import { Toast, Dialog, Cell, CellGroup, List, Button } from "vant";
+import { Switch, Toast, Dialog, Cell, CellGroup, List, Button } from "vant";
 import axios from "../../public/axios.js";
 import Token from "../../public/util.js";
 const token = new Token();
@@ -45,10 +52,16 @@ export default {
         [Cell.name]: Cell,
         [CellGroup.name]: CellGroup,
         [Toast.name]: Toast,
-        [Dialog.name]: Dialog
+        [Dialog.name]: Dialog,
+        [Switch.name]: Switch
     },
     data() {
         return {
+            task: {
+                status: 0,
+                task_target: 0,
+                reward: 0
+            },
             list: [],
             loadingNum: 0,
             loadingList: [],
@@ -64,7 +77,7 @@ export default {
                     if (this.loadingNum >= this.loadingList.length) {
                         this.finished = true;
                         this.loading = false;
-                        return
+                        return;
                     }
                     this.list.push(this.loadingList[i]);
                     this.loadingNum += 1;
@@ -74,6 +87,43 @@ export default {
 
                 // 数据全部加载完成
             }, 1500);
+        },
+        getTask() {
+            axios
+                .request({
+                    url: "share/tasks",
+                    method: "get",
+                    headers: {
+                        token: localStorage.getItem("token")
+                    }
+                })
+                .then(res => {
+                    if (res.data.status === 1) {
+                        this.task.status = true;
+                    } else {
+                        this.task.status = false;
+                    }
+                    this.task.task_target = res.data.task_target;
+                    this.task.reward = res.data.reward;
+                });
+        },
+        inputTask() {
+            axios
+                .request({
+                    url: "share/tasks/1",
+                    method: "put",
+                    headers: {
+                        token: localStorage.getItem("token")
+                    },
+                    data: {
+                        reward: this.task.reward,
+                        status: this.task.status? 1 : 0,
+                        task_target: this.task.task_target
+                    }
+                })
+                .then(res => {
+                    Toast.success("修改成功");
+                });
         },
         getList() {
             axios
@@ -118,7 +168,7 @@ export default {
                     }
                 })
                 .then(res => {
-                    this.list[index].flag = 1
+                    this.list[index].flag = 1;
                     Toast.success("成功核销");
                 });
         }
@@ -126,11 +176,15 @@ export default {
     mounted() {
         token.initToken(this.$route.query.token);
         this.getList();
+        this.getTask();
     }
 };
 </script>
 
 <style lang='less'>
+.van-cell__title{
+    text-align: left;
+}
 .listPage {
     width: 100%;
     height: 100%;
