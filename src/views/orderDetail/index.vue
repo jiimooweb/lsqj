@@ -1,8 +1,8 @@
 <template>
     <div class="detail-page">
-        <p class="detail-page-title">
+        <!-- <p class="detail-page-title">
             <span>订单详情</span>
-        </p>
+        </p> -->
         <div class="detail-page-conter" v-for="(item,index) in 5" :key='index'>
             <div class="detail-page-conter-img">
                 <img :src="img">
@@ -60,11 +60,11 @@ export default {
 .detail-page {
     position: absolute;
     width: 100%;
-    height: calc(100% - 50px - 50px - 40px);
+    height: calc(100% - 50px - 40px);
     border-radius: 10px;
     overflow-x: hidden;
     overflow-y: scroll;
-    margin: 50px auto 5px;
+    margin: 0px auto 5px;
     background: #fff;
     &-title {
         position: fixed;

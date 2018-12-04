@@ -56,14 +56,14 @@
                 type="warning"
                 class="shareBtn"
                 size="large"
-                v-if="shareType === 'over'"
-                @click="showOver()"
+                v-if="shareType === 'over' && !(this.$route.query.id != undefined && this.userData.id != this.$route.query.id)"
+                @click="showOver(true)"
             >资料已填写,查看详情</van-button>
             <van-button
                 type="warning"
                 class="shareBtn"
                 size="large"
-                v-if="shareType === 'over' && userData.id != this.$route.query.id"
+                v-if="shareType === 'over' && (this.$route.query.id != undefined && this.userData.id != this.$route.query.id)"
                 @click="showFix(true)"
             >任务完成,我也要分享</van-button>
         </div>
@@ -147,7 +147,7 @@ export default {
     },
     data() {
         return {
-            overModal:true,
+            overModal:false,
             noSubscribe:false,
             isAdmin:0,
             isSubscribe:0,

@@ -1,8 +1,8 @@
 <template>
     <div class="order">
-        <p class="order-title">
+        <!-- <p class="order-title">
             <span>我的订单</span>
-        </p>
+        </p> -->
         <van-tabs v-model="orderType" class="order-tab" @click="getOrder()">
             <van-tab :title="item.label" v-for="(item,index) in orderText" :key='index'></van-tab>
         </van-tabs>
@@ -79,12 +79,7 @@ export default {
             this.$router.push("/orderDetail");
         },
         getOrder(){
-            axios.request({
-                url: "/activity/activitys/wx",
-                method: "get"
-            }).then(res => {
-                console.log(res);
-            });
+            
         }
     },
     mounted() {
@@ -115,12 +110,12 @@ export default {
         text-align: left;
     }
     &-tab {
-        margin-top: 50px;
+        // margin-top: 50px;
     }
     &-list {
         position: absolute;
         width: 100%;
-        height: calc(100% - 50px - 50px - 50px);
+        height: calc(100% - 50px - 50px);
         padding-bottom: 10px;
         overflow-y: scroll;
         overflow-x: hidden;

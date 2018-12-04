@@ -1,20 +1,20 @@
 <template>
     <div>
         <div class="cart_page">
-            <p class="cart_title">
+            <!-- <p class="cart_title">
                 <span>购物车</span>
-            </p>
+            </p> -->
             <div class="cart_item_page">
                 <van-checkbox-group class="card-goods" v-model="checkedGoods">
-                    <van-checkbox class="card-goods__item" v-for="item in goods" :key="item.good.id" :name="item.good.id">
+                    <van-checkbox class="card-goods__item" v-for="item in goods" :key="item.good.id" :name="item.good.id" @change='returnCheckedGoods()'>
                         <!-- <van-card :title="item.good.name" :desc="item.good.name" :num="item.num" :price="formatPrice(item.good.price)" :thumb="item.good.imgs[0]" /> -->
-                        <van-card :title="item.good.name" :desc="item.good.name" :num="item.num" :price="formatPrice(item.good.price)" :thumb="item.good.imgs[0].url" />
+                        <van-card :title="item.good.name" :num="item.num" :price="formatPrice((item.good.type === 'discount' || item.good.type === 'member')?item.good.discount:item.good.price)" :thumb="item.good.imgs[0].url" />
                     </van-checkbox>
                 </van-checkbox-group>
             </div>
 
             <van-submit-bar :price="totalPrice" :disabled="!checkedGoods.length" :button-text="submitBarText" @submit="onSubmit">
-                <van-checkbox class="isAll" v-model="isAll">全选</van-checkbox>
+                <van-checkbox class="isAll" v-model="isAll" @change="allCheck()">全选</van-checkbox>
             </van-submit-bar>
         </div>
 
@@ -35,7 +35,7 @@ export default {
 
     data() {
         return {
-            isAll: false,
+            isAll:false,
             checkedGoods: [],
             goods: []
         };
@@ -43,18 +43,35 @@ export default {
 
     computed: {
         submitBarText() {
-            const count = this.checkedGoods.length;
-            return "结算" + (count ? `(${count})` : "");
+            let count = 0
+            for(let item in this.goods){
+                if(this.checkedGoods.indexOf(this.goods[item].good.id) !== -1){
+                    count += this.goods[item].num
+                }
+            }
+            return "结算" + (count ? `(${count})` : ""); 
         },
 
         totalPrice() {
-            return this.goods.reduce(
-                (total, item) => (this.checkedGoods.indexOf(item.good.id) !== -1 ? item.good.price*100*item.num : 0),0
-            );
-        }
+            let total = 0
+            for(let item in this.goods){
+                if(this.checkedGoods.indexOf(this.goods[item].good.id) !== -1){
+                    if(this.goods[item].good.type === 'discount' || this.goods[item].good.type === 'member'){
+                        total += this.goods[item].good.discount * 100 * this.goods[item].num
+                    }else{
+                        total += this.goods[item].good.price * 100 * this.goods[item].num
+                    }
+                }
+            }
+            return total
+        },
     },
 
     methods: {
+        returnCheckedGoods(){
+            console.log(this.checkedGoods);
+            
+        },
         formatPrice(price) {
             return price.toFixed(2);
         },
@@ -62,9 +79,20 @@ export default {
         onSubmit() {
             Toast("点击结算");
         },
+        //全选购物车
+        allCheck(){
+            if(this.isAll){
+                for(let item in this.goods){
+                    this.checkedGoods.push(this.goods[item].good.id)
+                }
+            }else{
+                this.checkedGoods = []
+            }
+        },  
+
         getGoodsList(){
             this.goods = JSON.parse(localStorage.getItem('cartList'))
-            console.log(this.goods[0].good.price);
+            console.log(this.goods);
         }
     },
     mounted(){
@@ -98,10 +126,10 @@ export default {
     }
     .cart_item_page {
         width: 100%;
-        height: calc(100% - 50px - 50px - 50px);
+        height: calc(100% - 50px - 50px);
         overflow-y: scroll;
         overflow-x: hidden;
-        margin: 50px auto 0;
+        margin: 0px auto 0;
         .card-goods {
             width: 90%;
             overflow: hidden;
@@ -109,6 +137,7 @@ export default {
             border-radius: 10px;
             background: #fff;
             &__item {
+                margin-top: 10px;
                 margin-bottom: 10px;
                 position: relative;
                 background-color: #fff;

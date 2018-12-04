@@ -25,9 +25,9 @@
                     <div class="goods-price">{{ formatPrice(goods.price) }}</div>
                 </van-cell>
                 <van-cell class="goods-express">
-                    <van-col span="8">月销：{{ goods.monthly_sales }}</van-col>
-                    <van-col span="8">库存：{{ goods.stock }}</van-col>
-                    <van-col span="8">规格: 500g/件</van-col>
+                    <van-col span="12">月销：{{ goods.monthly_sales }}</van-col>
+                    <van-col span="12">库存：{{ goods.stock }}</van-col>
+                    <!-- <van-col span="8">规格: 500g/件</van-col> -->
                 </van-cell>
             </van-cell-group>
             <van-cell-group class="goods-cell-group">
@@ -98,7 +98,7 @@ export default {
         return {
             cartLength: 0,
             goodsShow: false,
-            goodsId: "4",
+            goodsId: "10",
             goodsType: 0,
             goods: {
                 name: "美国伽力果（约680g/3个）",
@@ -187,11 +187,16 @@ export default {
                 for (let i = 0; i < cartList.length; i++) {
                     if (cartList[i].good.id === good.id) {
                         cartList[i].num++;
+                        console.log('++');
+                        
+                        return cartList
                     } else if (i === (cartList.length - 1)) {
                         cartList.push({
                             good: good,
                             num: 1
                         });
+                        console.log('++');
+                        return cartList
                     }
                 }
             } else {
@@ -199,6 +204,7 @@ export default {
                     good: good,
                     num: 1
                 });
+                console.log('++');
             }
             return cartList;
         }
