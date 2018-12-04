@@ -42,10 +42,11 @@
             <van-goods-action-mini-btn
                 icon="cart"
                 @click="onClickCart"
+                :info="cartLength"
             >
                 购物车
             </van-goods-action-mini-btn>
-            <van-goods-action-big-btn @click="sorry">
+            <van-goods-action-big-btn @click="addCart">
                 加入购物车
             </van-goods-action-big-btn>
             <van-goods-action-big-btn
@@ -95,6 +96,7 @@ export default {
 
     data() {
         return {
+            cartLength: 0,
             goodsShow: false,
             goodsId: "4",
             goodsType: 0,
@@ -145,14 +147,66 @@ export default {
                     this.goodsShow = true;
                 });
         },
-        addCart(){
+        addCart() {
             //存入缓存购物车
-            let cartList = JSON.parse(localStorage.getItem('cartList'))
+            let cartList = [];
+            cartList = this.returnCart(this.goods);
+            this.cartLength = 0
+            for(let i=0;i<cartList.length;i++){
+                this.cartLength+=cartList[i].num
+            }
+            console.log(cartList);
+            localStorage.setItem("cartList", JSON.stringify(cartList));
+            // console.log(JSON.parse(localStorage.getItem("cartList")));
+        },
+        initCart() {
+            if (localStorage.getItem("cartList")) {
+                for(let i=0;i<JSON.parse(localStorage.getItem("cartList")).length;i++){
+                    this.cartLength+=JSON.parse(localStorage.getItem("cartList"))[i].num
+                }
+            }
+        },
+        //处理购物车数据
+        returnCart(good) {
+            /**
+             * 格式
+             * [
+             *      {
+             *          good:{
+             *               ...
+             *          },
+             *          num:'1'
+             *      }
+             * ]
+             */
+            let cartList = [];
+            if (localStorage.getItem("cartList")) {
+                cartList = JSON.parse(localStorage.getItem("cartList"));
+            }
+            if (cartList.length > 0) {
+                for (let i = 0; i < cartList.length; i++) {
+                    if (cartList[i].good.id === good.id) {
+                        cartList[i].num++;
+                    } else if (i === (cartList.length - 1)) {
+                        cartList.push({
+                            good: good,
+                            num: 1
+                        });
+                    }
+                }
+            } else {
+                cartList.push({
+                    good: good,
+                    num: 1
+                });
+            }
+            return cartList;
         }
     },
     mounted() {
         token.initToken(this.$route.query.token);
         this.getGoodsData();
+        this.initCart();
     }
 };
 </script>

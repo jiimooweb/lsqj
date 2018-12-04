@@ -6,8 +6,9 @@
             </p>
             <div class="cart_item_page">
                 <van-checkbox-group class="card-goods" v-model="checkedGoods">
-                    <van-checkbox class="card-goods__item" v-for="item in goods" :key="item.id" :name="item.id">
-                        <van-card :title="item.title" :desc="item.desc" :num="item.num" :price="formatPrice(item.price)" :thumb="item.thumb" />
+                    <van-checkbox class="card-goods__item" v-for="item in goods" :key="item.good.id" :name="item.good.id">
+                        <!-- <van-card :title="item.good.name" :desc="item.good.name" :num="item.num" :price="formatPrice(item.good.price)" :thumb="item.good.imgs[0]" /> -->
+                        <van-card :title="item.good.name" :desc="item.good.name" :num="item.num" :price="formatPrice(item.good.price)" :thumb="item.good.imgs[0].url" />
                     </van-checkbox>
                 </van-checkbox-group>
             </div>
@@ -35,63 +36,8 @@ export default {
     data() {
         return {
             isAll: false,
-            checkedGoods: ["1", "2", "3", "5"],
-            goods: [
-                {
-                    id: "1",
-                    title: "进口香蕉",
-                    desc: "约250g，2根",
-                    price: 200,
-                    num: 1,
-                    thumb:
-                        "https://img.yzcdn.cn/public_files/2017/10/24/2f9a36046449dafb8608e99990b3c205.jpeg"
-                },
-                {
-                    id: "2",
-                    title: "陕西蜜梨",
-                    desc: "约600g",
-                    price: 690,
-                    num: 1,
-                    thumb:
-                        "https://img.yzcdn.cn/public_files/2017/10/24/f6aabd6ac5521195e01e8e89ee9fc63f.jpeg"
-                },
-                {
-                    id: "3",
-                    title: "美国伽力果",
-                    desc: "约680g/3个",
-                    price: 2680,
-                    num: 1,
-                    thumb:
-                        "https://img.yzcdn.cn/public_files/2017/10/24/320454216bbe9e25c7651e1fa51b31fd.jpeg"
-                },
-                {
-                    id: "4",
-                    title: "青菜",
-                    desc: "约680g/3个",
-                    price: 2680,
-                    num: 1,
-                    thumb:
-                        "https://img.yzcdn.cn/public_files/2017/10/24/320454216bbe9e25c7651e1fa51b31fd.jpeg"
-                },
-                {
-                    id: "5",
-                    title: "番茄",
-                    desc: "约680g/3个",
-                    price: 2680,
-                    num: 1,
-                    thumb:
-                        "https://img.yzcdn.cn/public_files/2017/10/24/320454216bbe9e25c7651e1fa51b31fd.jpeg"
-                },
-                {
-                    id: "6",
-                    title: "茄子",
-                    desc: "约680g/3个",
-                    price: 2680,
-                    num: 1,
-                    thumb:
-                        "https://img.yzcdn.cn/public_files/2017/10/24/320454216bbe9e25c7651e1fa51b31fd.jpeg"
-                }
-            ]
+            checkedGoods: [],
+            goods: []
         };
     },
 
@@ -103,24 +49,26 @@ export default {
 
         totalPrice() {
             return this.goods.reduce(
-                (total, item) =>
-                    total +
-                    (this.checkedGoods.indexOf(item.id) !== -1
-                        ? item.price
-                        : 0),
-                0
+                (total, item) => (this.checkedGoods.indexOf(item.good.id) !== -1 ? item.good.price*100*item.num : 0),0
             );
         }
     },
 
     methods: {
         formatPrice(price) {
-            return (price / 100).toFixed(2);
+            return price.toFixed(2);
         },
 
         onSubmit() {
             Toast("点击结算");
+        },
+        getGoodsList(){
+            this.goods = JSON.parse(localStorage.getItem('cartList'))
+            console.log(this.goods[0].good.price);
         }
+    },
+    mounted(){
+        this.getGoodsList()
     }
 };
 </script>

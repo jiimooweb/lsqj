@@ -11,6 +11,11 @@
         <p class="qrcodeText">(关注后请刷新本页面)</p>
         <img src="../../assets/qrcode.jpg" class="qrcode">
     </van-popup>
+    <van-popup v-model="overModal" class="subscribeModal" v-if="shareType === 'over'">
+        <p class="overText1">姓名：{{shareOver.name}}</p>
+        <p class="overText1">联系方式：{{shareOver.contact_way}}</p>
+        <p class="overText2">请出示此页面到农场免费采摘一次</p>
+    </van-popup>
     <div class="page1">
         <div class="userImg">
             <img
@@ -52,8 +57,15 @@
                 class="shareBtn"
                 size="large"
                 v-if="shareType === 'over'"
-                disabled
-            >资料已填写</van-button>
+                @click="showOver()"
+            >资料已填写,查看详情</van-button>
+            <van-button
+                type="warning"
+                class="shareBtn"
+                size="large"
+                v-if="shareType === 'over' && userData.id != this.$route.query.id"
+                @click="showFix(true)"
+            >任务完成,我也要分享</van-button>
         </div>
     </div>
     <div class="page2">
@@ -86,7 +98,7 @@
             <p>3、自己无法给自己助力</p>
             <p>4、每个人只能完成一次任务</p>
             <p>5、完成分享任务后需填写相关资料，获取采摘机会</p>
-            <p>6、到店时与店员确认使用该次机会</p>
+            <p>6、分享任务完成并填写资料后，可凭该页面或页面截图到农场免费采摘一次</p>
         </div>
         <p class="shareTip">本活动最终解释权归绿水清江所有</p>
     </div>
@@ -135,6 +147,7 @@ export default {
     },
     data() {
         return {
+            overModal:true,
             noSubscribe:false,
             isAdmin:0,
             isSubscribe:0,
@@ -145,6 +158,10 @@ export default {
             },
             shareNum: 1,
             shareType: "share", //share 任务未开始 record 任务已完成 over填写完资料
+            shareOver:{
+                name:'',
+                phone:''
+            },
             pageShow: false,
             fixDisplay: false,
 
@@ -188,6 +205,9 @@ export default {
         }
     },
     methods: {
+        showOver(i){
+            this.overModal = i
+        },
         init() {
             console.log("init");
             token.initToken(this.$route.query.token);
@@ -246,6 +266,7 @@ export default {
                         }
                     })
                     .then(res => {
+                        console.log('已执行');
                         this.shareType = res.data.flag;
                         this.shareNum = res.data.task.task_target;
                         this.configData.img = res.data.task.img
@@ -262,6 +283,7 @@ export default {
                             this.helpList.push(res.data.share[i].beshare);
                         }
                         this.pageShow = true;
+                        this.shareOver = res.data.share_over
                         this.getUesr();
                     })
                     .catch(err => {
@@ -353,7 +375,7 @@ export default {
             ) {
                 axios
                     .request({
-                        url: this.url + "share/over/register",
+                        url: "share/over/register",
                         method: "post",
                         headers: {
                             token: localStorage.getItem("token")
@@ -365,7 +387,7 @@ export default {
                     })
                     .then(res => {
                         this.getShowAndBeShow();
-                        Toast.success("已为填写资料");
+                        Toast.success("已填写资料");
                     });
             } else {
                 Toast.fail("资料不完整");
@@ -387,6 +409,14 @@ export default {
     width: 80%;
     padding-bottom: 20px;
     border-radius: 15px;
+}
+.overText1{
+    font-size: 16px;
+    color: #333;
+}
+.overText2{
+    font-size: 14px;
+    color: #999;
 }
 .qrcodeText{
     text-align: center;

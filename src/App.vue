@@ -21,10 +21,6 @@
         icon="pending-orders"
         to='/order'
       >订单</van-tabbar-item>
-      <van-tabbar-item
-        icon="pending-orders"
-        to='/share'
-      >分享</van-tabbar-item>
     </van-tabbar>
 
   </div>
