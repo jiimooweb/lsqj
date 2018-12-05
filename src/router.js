@@ -64,6 +64,13 @@ const routes = [
     meta: {
       title: '分享任务管理'
     }
+  },
+  {
+    name: 'goodsList',
+    component: () => import('./views/goodsList'),
+    meta: {
+      title: '商品列表'
+    }
   }
 ];
 

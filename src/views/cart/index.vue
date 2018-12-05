@@ -5,16 +5,57 @@
                 <span>购物车</span>
             </p> -->
             <div class="cart_item_page">
-                <van-checkbox-group class="card-goods" v-model="checkedGoods">
-                    <van-checkbox class="card-goods__item" v-for="item in goods" :key="item.good.id" :name="item.good.id" @change='returnCheckedGoods()'>
-                        <!-- <van-card :title="item.good.name" :desc="item.good.name" :num="item.num" :price="formatPrice(item.good.price)" :thumb="item.good.imgs[0]" /> -->
-                        <van-card :title="item.good.name" :num="item.num" :price="formatPrice((item.good.type === 'discount' || item.good.type === 'member')?item.good.discount:item.good.price)" :thumb="item.good.imgs[0].url" />
+                <van-checkbox-group
+                    class="card-goods"
+                    v-model="checkedGoods"
+                >
+                    <van-checkbox
+                        class="card-goods__item"
+                        v-for="(item,index) in goods"
+                        :key="item.good.id"
+                        :name="item.good.id"
+                        @change='returnCheckedGoods()'
+                    >
+                        <!-- <van-card :title="item.good.name" :num="item.num" :price="formatPrice((item.good.type === 'discount' || item.good.type === 'member')?item.good.discount:item.good.price)" :thumb="item.good.imgs[0].url" /> -->
+                        <div class="card-item">
+                            <div class="card-item-img">
+                                <img src="http://download.rdoorweb.com/20181204/bbc1fdc5e7a882da726f95bcf1881786.jpg">
+                            </div>
+                            <div class="card-item-text">
+                                <p class="card-item-text-title">
+                                    <a class="card-item-text-title-a">{{item.good.name}}</a>
+                                </p>
+                                <p class="card-item-text-price">
+                                    <span class="card-item-text-price-new">¥{{item.good.endPrice}}</span>
+                                    <!-- <span class="card-item-text-price-old">20元</span> -->
+                                    <span class="card-item-text-price-changeNum" @click.stop="">
+                                        <van-stepper
+                                            v-model="item.num"
+                                            integer
+                                            :min="0"
+                                            :max="item.good.limit"
+                                            :step="1"
+                                            @minus='isZero(item.num,index)'
+                                        />
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
                     </van-checkbox>
                 </van-checkbox-group>
             </div>
 
-            <van-submit-bar :price="totalPrice" :disabled="!checkedGoods.length" :button-text="submitBarText" @submit="onSubmit">
-                <van-checkbox class="isAll" v-model="isAll" @change="allCheck()">全选</van-checkbox>
+            <van-submit-bar
+                :price="totalPrice"
+                :disabled="!checkedGoods.length"
+                :button-text="submitBarText"
+                @submit="onSubmit"
+            >
+                <van-checkbox
+                    class="isAll"
+                    v-model="isAll"
+                    @change="allCheck()"
+                >全选</van-checkbox>
             </van-submit-bar>
         </div>
 
@@ -22,7 +63,17 @@
 </template>
 
 <script>
-import { Checkbox, CheckboxGroup, Card, SubmitBar, Toast, Icon } from "vant";
+import {
+    Stepper,
+    Checkbox,
+    CheckboxGroup,
+    Card,
+    SubmitBar,
+    Toast,
+    Icon,
+    Dialog
+} from "vant";
+import axios from "../../public/axios";
 
 export default {
     components: {
@@ -30,12 +81,14 @@ export default {
         [Checkbox.name]: Checkbox,
         [SubmitBar.name]: SubmitBar,
         [CheckboxGroup.name]: CheckboxGroup,
-        [Icon.name]: Icon
+        [Icon.name]: Icon,
+        [Stepper.name]: Stepper,
+        [Dialog.name]: Dialog
     },
 
     data() {
         return {
-            isAll:false,
+            isAll: false,
             checkedGoods: [],
             goods: []
         };
@@ -43,34 +96,56 @@ export default {
 
     computed: {
         submitBarText() {
-            let count = 0
-            for(let item in this.goods){
-                if(this.checkedGoods.indexOf(this.goods[item].good.id) !== -1){
-                    count += this.goods[item].num
+            let count = 0;
+            for (let item in this.goods) {
+                if (
+                    this.checkedGoods.indexOf(this.goods[item].good.id) !== -1
+                ) {
+                    count += this.goods[item].num;
                 }
             }
-            return "结算" + (count ? `(${count})` : ""); 
+            return "结算" + (count ? `(${count})` : "");
         },
 
         totalPrice() {
-            let total = 0
-            for(let item in this.goods){
-                if(this.checkedGoods.indexOf(this.goods[item].good.id) !== -1){
-                    if(this.goods[item].good.type === 'discount' || this.goods[item].good.type === 'member'){
-                        total += this.goods[item].good.discount * 100 * this.goods[item].num
-                    }else{
-                        total += this.goods[item].good.price * 100 * this.goods[item].num
-                    }
+            let total = 0;
+            for (let item in this.goods) {
+                if (
+                    this.checkedGoods.indexOf(this.goods[item].good.id) !== -1
+                ) {
+                    total +=
+                        this.goods[item].good.endPrice *
+                        100 *
+                        this.goods[item].num;
+                    // console.log(this.goods[item]);
                 }
             }
-            return total
-        },
+            return total;
+        }
     },
 
     methods: {
-        returnCheckedGoods(){
-            console.log(this.checkedGoods);
+        //判断数量是否为0
+        isZero(num,index) {
+            console.log(num);
             
+            if ((num-1) === 0) {
+                Dialog.confirm({
+                    title: '确认删除',
+                    message: '是否从购物车删除该商品?'
+                }).then(() => {
+                // on confirm
+                    this.goods.splice(index,1)
+                    localStorage.setItem('cartList',this.goods)
+                }).catch(() => {
+                // on cancel
+                    this.goods[index].num++
+                });
+            }
+            localStorage.setItem('cartList',JSON.stringify(this.goods))
+        },
+        returnCheckedGoods() {
+            // console.log(this.checkedGoods);
         },
         formatPrice(price) {
             return price.toFixed(2);
@@ -80,23 +155,53 @@ export default {
             Toast("点击结算");
         },
         //全选购物车
-        allCheck(){
-            if(this.isAll){
-                for(let item in this.goods){
-                    this.checkedGoods.push(this.goods[item].good.id)
+        allCheck() {
+            if (this.isAll) {
+                for (let item in this.goods) {
+                    this.checkedGoods.push(this.goods[item].good.id);
                 }
-            }else{
-                this.checkedGoods = []
+            } else {
+                this.checkedGoods = [];
             }
-        },  
+        },
 
-        getGoodsList(){
-            this.goods = JSON.parse(localStorage.getItem('cartList'))
-            console.log(this.goods);
+        getGoodsList() {
+            this.goods = JSON.parse(localStorage.getItem("cartList"));
+            if(this.goods){
+                this.verificationCart();
+            }
+        },
+        //验证购物车商品
+        verificationCart() {
+            let iCart = [];
+            for (let i = 0; i < this.goods.length; i++) {
+                iCart.push({
+                    id: this.goods[i].good.id,
+                    num: this.goods[i].num
+                });
+            }
+            if (iCart.length > 0) {
+                axios
+                    .request({
+                        url: "mall/cart",
+                        method: "post",
+                        headers: {
+                            token: localStorage.getItem("token")
+                        },
+                        data: {
+                            goods: iCart
+                        }
+                    })
+                    .then(res => {
+                        for (let i = 0; i < this.goods.length; i++) {
+                            this.goods[i].good = res.data[i];
+                        }
+                    });
+            }
         }
     },
-    mounted(){
-        this.getGoodsList()
+    mounted() {
+        this.getGoodsList();
     }
 };
 </script>
@@ -162,6 +267,61 @@ export default {
                 }
                 .van-card__price {
                     color: #f44;
+                }
+            }
+            .card-item {
+                width: 95%;
+                height: 100px;
+                margin: 10px auto;
+                &-img {
+                    width: 100px;
+                    height: 100px;
+                    float: left;
+                    overflow: hidden;
+                    border-radius: 5px;
+                    img {
+                        display: block;
+                        width: 100px;
+                    }
+                }
+                &-text {
+                    float: right;
+                    width: calc(100% - 100px - 15px);
+                    height: 100px;
+                    &-title {
+                        margin-top: 5px;
+                        padding: 0 5px;
+                        font-size: 15px;
+                        color: #111;
+                        text-align: left;
+                        line-height: 25px;
+                        height: 50px;
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 2;
+                        overflow: hidden;
+                        &-tag {
+                            margin-right: 5px;
+                        }
+                        &-a {
+                            color: #111;
+                        }
+                    }
+                    &-price {
+                        font-size: 14px;
+                        margin: 20px 0 0;
+                        padding: 0 5px;
+                        &-new {
+                            font-size: 15px;
+                            color: #ed4014;
+                            line-height: 30px;
+                            float: left;
+                        }
+                        &-changeNum {
+                            float: left;
+                            margin-left: 15px;
+                        }
+                    }
                 }
             }
         }
