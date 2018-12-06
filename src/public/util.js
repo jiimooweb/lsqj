@@ -50,9 +50,9 @@ class Token {
         if(env === 'development'){
             //本地测试使用
             if(router.history.current.query.id){
-                this.url = encodeURIComponent('http://localhost:8081/#'+router.history.current.path+'?id='+router.history.current.query.id)
+                this.url = encodeURIComponent('http://localhost:8080/#'+router.history.current.path+'?id='+router.history.current.query.id)
             }else{
-                this.url = encodeURIComponent('http://localhost:8081/#'+router.history.current.path)
+                this.url = encodeURIComponent('http://localhost:8080/#'+router.history.current.path)
             }
         }else{
             //上传服务器使用

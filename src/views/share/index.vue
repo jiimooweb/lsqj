@@ -68,6 +68,9 @@
                 @click="showFix(true)"
             >任务完成,我也要分享</van-button>
         </div>
+        <div class="map">
+            <a href="https://uri.amap.com/marker?position=113.452395,22.575444"><van-icon name="location" />绿水清江农场</a>
+        </div>
     </div>
     <div v-if="shareType !== 'noopen'" class="page2">
         <div class="shareMember">
@@ -91,6 +94,7 @@
             </div>
         </div>
     </div>
+    
     <div v-if="shareType !== 'noopen'" class="page3">
         <div class="shareText">
             <p>活动细则</p>
@@ -130,7 +134,7 @@
 </template>
 
 <script>
-import { Popup, Field, Dialog, Toast, Button } from "vant";
+import { Icon, Popup, Field, Dialog, Toast, Button } from "vant";
 import Vue from "vue";
 Vue.use(Dialog);
 import axios from "../../public/axios.js";
@@ -144,7 +148,8 @@ export default {
         [Button.name]: Button,
         [Toast.name]: Toast,
         [Field.name]: Field,
-        [Popup.name]: Popup
+        [Popup.name]: Popup,
+        [Icon.name]: Icon
     },
     data() {
         return {
@@ -419,6 +424,18 @@ export default {
 </script>
 
 <style lang="less">
+.map{
+    width: 100%;
+    a{
+        .van-icon{
+            margin-top: 5px;
+            margin-right: 5px;
+        }
+        color: #333;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+}
 .subscribeModal{
     width: 80%;
     padding-bottom: 20px;
@@ -464,6 +481,9 @@ export default {
 .btnPage {
     width: 70%;
     margin: 0 auto;
+    button{
+        margin-bottom: 10px;
+    }
 }
 .intoAdmin{
     position: absolute;
