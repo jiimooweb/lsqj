@@ -7,7 +7,7 @@ Vue.use(Router);
 const routes = [
   {
     path: '*',
-    redirect: '/goods'
+    redirect: '/mallIndex'
   },
   {
     name: 'user',
@@ -31,10 +31,10 @@ const routes = [
     }
   },
   {
-    name: 'mall',
-    component: () => import('./views/mall'),
+    name: 'mallIndex',
+    component: () => import('./views/mallIndex'),
     meta: {
-      title: '首页'
+      title: '绿水清江商城'
     }
   },
   {

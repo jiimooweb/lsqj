@@ -10,7 +10,7 @@
     >
       <van-tabbar-item
         icon="shop"
-        to='/mall'
+        to='/mallIndex'
       >首页</van-tabbar-item>
       <van-tabbar-item icon="more-o">分类</van-tabbar-item>
       <van-tabbar-item

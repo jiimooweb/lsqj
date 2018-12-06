@@ -52,7 +52,7 @@ class httpRequest {
             baseURL: baseURL,
             // timeout: 2000,
             headers: {
-                
+                token:localStorage.getItem("token") || this.$route.query.token
             }
         }
         return Axios.create(conf)

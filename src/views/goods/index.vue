@@ -91,7 +91,8 @@ export default {
         [SwipeItem.name]: SwipeItem,
         [GoodsAction.name]: GoodsAction,
         [GoodsActionBigBtn.name]: GoodsActionBigBtn,
-        [GoodsActionMiniBtn.name]: GoodsActionMiniBtn
+        [GoodsActionMiniBtn.name]: GoodsActionMiniBtn,
+        [Toast.name]: Toast
     },
 
     data() {
@@ -142,7 +143,6 @@ export default {
                     }
                 })
                 .then(res => {
-                    console.log(process.env.NODE_ENV);
                     this.goods = res.data[0];
                     this.goodsShow = true;
                 });
@@ -155,7 +155,6 @@ export default {
             for(let i=0;i<cartList.length;i++){
                 this.cartLength+=cartList[i].num
             }
-            console.log(cartList);
             localStorage.setItem("cartList", JSON.stringify(cartList));
             // console.log(JSON.parse(localStorage.getItem("cartList")));
         },
@@ -186,10 +185,14 @@ export default {
             if (cartList.length > 0) {
                 for (let i = 0; i < cartList.length; i++) {
                     if (cartList[i].good.id === good.id) {
-                        cartList[i].num++;
-                        console.log('++');
-                        
+                        if(cartList[i].num < cartList[i].good.limit){
+                            cartList[i].num++;
+                            console.log('++');
+                        }else{
+                            Toast('此商品已超过购买数量');
+                        }
                         return cartList
+                        
                     } else if (i === (cartList.length - 1)) {
                         cartList.push({
                             good: good,

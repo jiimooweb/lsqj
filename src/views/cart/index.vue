@@ -5,12 +5,15 @@
                 <span>购物车</span>
             </p> -->
             <div class="cart_item_page">
+                <p v-if="!hasCart" class="tip">购物车暂无商品</p>
                 <van-checkbox-group
                     class="card-goods"
                     v-model="checkedGoods"
+                    v-else
                 >
                     <van-checkbox
                         class="card-goods__item"
+                        :disabled='item.good.error !== 0'
                         v-for="(item,index) in goods"
                         :key="item.good.id"
                         :name="item.good.id"
@@ -18,18 +21,33 @@
                     >
                         <!-- <van-card :title="item.good.name" :num="item.num" :price="formatPrice((item.good.type === 'discount' || item.good.type === 'member')?item.good.discount:item.good.price)" :thumb="item.good.imgs[0].url" /> -->
                         <div class="card-item">
+                            <van-icon name="close" class="deleteItem" @click.stop="deleteItem(index)" color='#999' size='20px'/>
                             <div class="card-item-img">
-                                <img src="http://download.rdoorweb.com/20181204/bbc1fdc5e7a882da726f95bcf1881786.jpg">
+                                <img :src="item.good.imgs[0].url">
                             </div>
                             <div class="card-item-text">
                                 <p class="card-item-text-title">
                                     <a class="card-item-text-title-a">{{item.good.name}}</a>
                                 </p>
                                 <p class="card-item-text-price">
+                                    <!-- 编辑商品错误 -->
+                                    <p class="card-item-text-price-error" v-if='item.good.error !== 0'>
+                                        {{item.good.error === 1?'非会员无法购买会员专属商品':
+                                        (item.good.error === 2?'商品数量超出购买上限':
+                                            (item.good.error === 3?'商品购买数量超出库存':
+                                                (item.good.error === 4?'商品已售罄':
+                                                    (item.good.error === 5?'商品已下架':'')
+                                                )
+                                            )
+                                        )
+                                        
+                                        }}
+                                    </p>
                                     <span class="card-item-text-price-new">¥{{item.good.endPrice}}</span>
                                     <!-- <span class="card-item-text-price-old">20元</span> -->
                                     <span class="card-item-text-price-changeNum" @click.stop="">
                                         <van-stepper
+                                        :disabled='item.good.error !== 0'
                                             v-model="item.num"
                                             integer
                                             :min="0"
@@ -44,7 +62,7 @@
                     </van-checkbox>
                 </van-checkbox-group>
             </div>
-
+            
             <van-submit-bar
                 :price="totalPrice"
                 :disabled="!checkedGoods.length"
@@ -88,6 +106,7 @@ export default {
 
     data() {
         return {
+            hasCart:false,
             isAll: false,
             checkedGoods: [],
             goods: []
@@ -125,10 +144,26 @@ export default {
     },
 
     methods: {
+        //删除产品
+        deleteItem(index){
+            console.log(index);
+            Dialog.confirm({
+                    title: '确认删除',
+                    message: '是否从购物车删除该商品?'
+                }).then(() => {
+                // on confirm
+                    this.goods.splice(index,1)
+                    localStorage.setItem('cartList',this.goods)
+                    if(this.goods.length === 0){
+                        this.hasCart = false
+                    }
+                }).catch(() => {
+                // on cancel
+                    
+                });
+        },
         //判断数量是否为0
         isZero(num,index) {
-            console.log(num);
-            
             if ((num-1) === 0) {
                 Dialog.confirm({
                     title: '确认删除',
@@ -137,6 +172,9 @@ export default {
                 // on confirm
                     this.goods.splice(index,1)
                     localStorage.setItem('cartList',this.goods)
+                    if(this.goods.length === 0){
+                        this.hasCart = false
+                    }
                 }).catch(() => {
                 // on cancel
                     this.goods[index].num++
@@ -181,6 +219,7 @@ export default {
                 });
             }
             if (iCart.length > 0) {
+                this.hasCart = true
                 axios
                     .request({
                         url: "mall/cart",
@@ -195,6 +234,8 @@ export default {
                     .then(res => {
                         for (let i = 0; i < this.goods.length; i++) {
                             this.goods[i].good = res.data[i];
+                            console.log();
+                            
                         }
                     });
             }
@@ -213,6 +254,13 @@ export default {
     height: 100%;
 
     background: #f2f2f2;
+    .deleteItem{
+        position: absolute;
+        right: 6%;
+        z-index: 10000;
+        display: block;
+        overflow: hidden;
+    }
     .cart_title {
         position: fixed;
         z-index: 1000;
@@ -235,6 +283,10 @@ export default {
         overflow-y: scroll;
         overflow-x: hidden;
         margin: 0px auto 0;
+        .tip{
+            font-size: 20px;
+            color: #999;
+        }
         .card-goods {
             width: 90%;
             overflow: hidden;
@@ -311,6 +363,12 @@ export default {
                         font-size: 14px;
                         margin: 20px 0 0;
                         padding: 0 5px;
+                        &-error{
+                            font-size: 12px;
+                            color: red;
+                            margin: -25px 0 0;
+                            padding: 0;
+                        }
                         &-new {
                             font-size: 15px;
                             color: #ed4014;
