@@ -1,34 +1,21 @@
 <template>
-  <div id="app">
+    <div id="app">
 
-    <router-view />
-    <!-- tabbar -->
-    <van-tabbar
-      v-model="active"
-      class="tabbarPage"
-      v-if="isShowTabbar"
-    >
-      <van-tabbar-item
-        icon="shop"
-        to='/mallIndex'
-      >首页</van-tabbar-item>
-      <van-tabbar-item icon="more-o">分类</van-tabbar-item>
-      <van-tabbar-item
-        icon="cart"
-        to='/cart'
-      >购物车</van-tabbar-item>
-      <van-tabbar-item
-        icon="pending-orders"
-        to='/order'
-      >订单</van-tabbar-item>
-    </van-tabbar>
+        <router-view />
+        <!-- tabbar -->
+        <van-tabbar v-model="active" class="tabbarPage" v-if="isShowTabbar">
+            <van-tabbar-item icon="shop" to='/mallIndex'>首页</van-tabbar-item>
+            <van-tabbar-item icon="more-o" to='/goodsType'>分类</van-tabbar-item>
+            <van-tabbar-item icon="cart" to='/cart'>购物车</van-tabbar-item>
+            <van-tabbar-item icon="pending-orders" to='/order'>订单</van-tabbar-item>
+        </van-tabbar>
 
-  </div>
+    </div>
 </template>
 <script>
 import { Tabbar, TabbarItem } from "vant";
-import Token from './public/util.js'
-const token = new Token
+import Token from "./public/util.js";
+const token = new Token();
 export default {
     components: {
         [Tabbar.name]: Tabbar,
@@ -37,33 +24,29 @@ export default {
     data() {
         return {
             active: 0,
-            isShowTabbar:true,
+            isShowTabbar: true,
 
             //不需要添加tabbar的路由name
-            showItem:[
-                'share',
-                'shareManage',
-                'goodsList'
-            ]
-        }
+            showItem: ["share", "shareManage", "goodsList"]
+        };
     },
-    watch:{
-        $route(to,from){
-            this.returnShowTabbar()
+    watch: {
+        $route(to, from) {
+            this.returnShowTabbar();
         }
     },
     mounted() {
-        this.returnShowTabbar()
+        this.returnShowTabbar();
     },
     methods: {
-        returnShowTabbar(){
-            for(let i=0;i<this.showItem.length;i++){
-                if(this.showItem[i] === this.$router.history.current.name){
-                    this.isShowTabbar = false
-                    return
+        returnShowTabbar() {
+            for (let i = 0; i < this.showItem.length; i++) {
+                if (this.showItem[i] === this.$router.history.current.name) {
+                    this.isShowTabbar = false;
+                    return;
                 }
-                if(i===this.showItem.length-1){
-                    this.isShowTabbar = true
+                if (i === this.showItem.length - 1) {
+                    this.isShowTabbar = true;
                 }
             }
         }

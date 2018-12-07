@@ -29,7 +29,7 @@
                                 <p class="card-item-text-title">
                                     <a class="card-item-text-title-a">{{item.good.name}}</a>
                                 </p>
-                                <p class="card-item-text-price">
+                                <div class="card-item-text-price">
                                     <!-- 编辑商品错误 -->
                                     <p class="card-item-text-price-error" v-if='item.good.error !== 0'>
                                         {{item.good.error === 1?'非会员无法购买会员专属商品':
@@ -56,7 +56,7 @@
                                             @minus='isZero(item.num,index)'
                                         />
                                     </span>
-                                </p>
+                                </div>
                             </div>
                         </div>
                     </van-checkbox>

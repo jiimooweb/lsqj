@@ -1,5 +1,7 @@
 import Axios from 'axios'
 import baseURL from '../../config/url'
+import Token from "./util.js";
+const token = new Token();
 class httpRequest {
     constructor() {
         this.options = {
@@ -41,18 +43,22 @@ class httpRequest {
               response
             }
             */
+            if(error.response.status){
+                token.initToken();
+            }
             // 对响应错误做点什么
             return Promise.reject(error)
         })
 
     }
+    
     // 创建实例
     create() {
         let conf = {
             baseURL: baseURL,
             // timeout: 2000,
             headers: {
-                token:localStorage.getItem("token") || this.$route.query.token
+                token:localStorage.getItem("token") || token.getUrlparam('token')
             }
         }
         return Axios.create(conf)

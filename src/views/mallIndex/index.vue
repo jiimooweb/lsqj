@@ -1,5 +1,8 @@
 <template>
     <div class="indexPage">
+        <div class="loading" v-if="loading">
+            <van-loading class="loading-in" size='30px'/>
+        </div>
         <div class="swipePage">
             <van-swipe
                 :autoplay="3000"
@@ -12,6 +15,16 @@
                     <img :src="item.image">
                 </van-swipe-item>
             </van-swipe>
+        </div>
+        <div class="nav">
+            <div class="nav-item">
+                <img src="../../assets/vip.png">
+                <p>会员专享</p>
+            </div>
+            <div class="nav-item">
+                <img src="../../assets/active.png">
+                <p>优惠商品</p>
+            </div>
         </div>
         <div class="type">
             <div class="type1">
@@ -68,17 +81,20 @@
 </template>
 
 <script>
-import { Cell, CellGroup, Swipe, SwipeItem } from "vant";
+import { Icon, Loading, Cell, CellGroup, Swipe, SwipeItem } from "vant";
 import axios from "../../public/axios";
 export default {
     components: {
         [Swipe.name]: Swipe,
         [SwipeItem.name]: SwipeItem,
         [Cell.name]: Cell,
-        [CellGroup.name]: CellGroup
+        [CellGroup.name]: CellGroup,
+        [Loading.name]: Loading,
+        [Icon.name]: Icon,
     },
     data() {
         return {
+            loading:true,
             swipeList: [],
             type1List:[]
         };
@@ -114,6 +130,7 @@ export default {
                 method:'get'
             }).then(res=>{
                 this.type1List = res.data.data
+                this.loading = false
             })
         }
     },
@@ -125,6 +142,7 @@ export default {
 </script>
 
 <style lang='less'>
+
 .indexPage {
     background: #eee;
     position: absolute;
@@ -132,6 +150,42 @@ export default {
     height: calc(100% - 50px);
     overflow-x: hidden;
     overflow-y: scroll;
+    .loading{
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        z-index: 10000000;
+        background: #eee;
+        &-in{
+            margin: 50% auto 0;
+        }
+    }
+    .swipePage{
+        background: #fff;
+    }
+    .nav{
+        width: 100%;
+        overflow: hidden;
+        background: #fff;
+        padding-bottom: 10px;
+        &-item{
+            width: calc(100% / 2);
+            height: 70px;
+            // background: #666;
+            float: left;
+            img{
+                width: 50px;
+                height: 50px;
+                display: block;
+                margin: 0 auto;
+            }
+            p{
+                font-size: 14px;
+                line-height: 20px;
+                margin:0;
+            }
+        }
+    }
     img {
         width: 100%;
     }
@@ -185,6 +239,7 @@ export default {
                     white-space: nowrap;
                 }
                 &-price{
+                    font-size: 14px;
                     color: red;
                     text-align: left;
                     margin: 0;
@@ -244,6 +299,7 @@ export default {
                     width: calc(100% - 100px - 10px);
                     color: red;
                     text-align: left;
+                    font-size: 14px;
                     margin: 30px 0 0;
                     &-new{
                         float: left;
