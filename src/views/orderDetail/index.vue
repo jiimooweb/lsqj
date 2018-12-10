@@ -3,55 +3,80 @@
         <!-- <p class="detail-page-title">
             <span>订单详情</span>
         </p> -->
-        <div class="detail-page-conter" v-for="(item,index) in 5" :key='index'>
+        <div class="detail-page-conter" v-for="(item,index) in orderData.order_goods" :key='index'>
             <div class="detail-page-conter-img">
-                <img :src="img">
+                <img :src="orderData.goods[index].imgs[0].url">
             </div>
             <div class="detail-page-conter-text">
-                <p class="detail-page-conter-text-name">苹果苹果苹果苹果苹果苹果苹果苹果苹果苹果苹果苹果苹果苹果</p>
+                <p class="detail-page-conter-text-name">{{orderData.goods[index].name}}</p>
                 <p class="detail-page-conter-text-price">
-                    <span class="detail-page-conter-text-price-piece">×2</span>
-                    <span class="detail-page-conter-text-price-price">¥12</span>
+                    <span class="detail-page-conter-text-price-piece">×{{item.num}}</span>
+                    <span class="detail-page-conter-text-price-price">¥{{item.discount}}</span>
                 </p>
             </div>
         </div>
         <div class="detail-page-click">
-            <van-button class="detail-page-click-intoDefail" round type="default" size="small" @click="getOrder()">申请退款</van-button>
-            <van-button class="detail-page-click-qrcode" round type="default" size="small">核销二维码</van-button>
+            <p class="detail-page-click-p">
+                <span class="detail-page-click-p-allText">订单总价</span>
+                <span class="detail-page-click-p-allPrice">¥ {{this.orderData.price}}</span>
+            </p>
+            <van-button v-if="orderData.pay_state === 0" class="detail-page-click-intoDefail" round type="danger" size="small" @click="getOrder()">支付</van-button>
+            <van-button v-if="orderData.pay_state === 1 && use_state === 0" class="detail-page-click-qrcode" round type="primary" size="small">核销二维码</van-button>
+            <van-button v-if="orderData.pay_state === 0" class="detail-page-click-intoDefail" round type="warning" size="small" @click="getOrder()">取消订单</van-button>
+            <van-button v-if="orderData.pay_state === 1 && use_state === 0" class="detail-page-click-intoDefail" round type="warning" size="small" @click="getOrder()">申请退款</van-button>
         </div>
+        <p class="detail-page-detail-hen"></p>
         <div class="detail-page-detail">
-            <p class="detail-page-detail-p">
+            <!-- discount_type 0 无 -->
+            <!-- <p class="detail-page-detail-p">
                 <span class="detail-page-detail-p-text">商品总价</span>
                 <span class="detail-page-detail-p-price">¥ 52</span>
-            </p>
-            <p class="detail-page-detail-p">
+            </p> -->
+            <!-- discount_type 1 满减 -->
+            <p class="detail-page-detail-p" v-if="orderData.discount_type === 1">
                 <span class="detail-page-detail-p-text">满减</span>
-                <span class="detail-page-detail-p-price">¥ 52</span>
+                <span class="detail-page-detail-p-price">¥ {{orderData.discount}}</span>
             </p>
-            <p class="detail-page-detail-p">
+            <!-- discount_type 2 折扣 -->
+            <p class="detail-page-detail-p" v-if="orderData.discount_type === 2">
                 <span class="detail-page-detail-p-text">折扣</span>
-                <span class="detail-page-detail-p-price">¥ 52</span>
+                <span class="detail-page-detail-p-price">¥ {{orderData.discount}}</span>
             </p>
-            <p class="detail-page-detail-hen"></p>
-            <p class="detail-page-detail-p">
+            <!-- <p class="detail-page-detail-hen"></p> -->
+            <!-- <p class="detail-page-detail-p">
                 <span class="detail-page-detail-p-allText">订单总价</span>
-                <span class="detail-page-detail-p-allPrice">¥ 52</span>
-            </p>
+                <span class="detail-page-detail-p-allPrice">¥ {{this.orderData.price}}</span>
+            </p> -->
         </div>
     </div>
 </template>
 
 <script>
 import { Button } from "vant";
+import axios from "../../public/axios";
 export default {
     components: {
         [Button.name]: Button
     },
     data() {
         return {
-            img:
-                "https://camo.githubusercontent.com/8ef9e5d3ef085affbcabf7754b02312a4ea10039/68747470733a2f2f696d672e797a63646e2e636e2f7075626c69635f66696c65732f323031372f31322f31382f66643738636636626235643132653261313139643035373662656466643233302e706e67"
+            orderData: ""
         };
+    },
+    methods: {
+        getOrderData() {
+            axios
+                .request({
+                    url: "order/orders/" + this.$route.query.id,
+                    method: "get"
+                })
+                .then(res => {
+                    this.orderData = res.data[0];
+                });
+        }
+    },
+    mounted() {
+        this.getOrderData();
     }
 };
 </script>
@@ -93,6 +118,7 @@ export default {
             margin: 10px 10px 0 10px;
             width: 100px;
             height: 100px;
+            border-radius: 5px;
             float: left;
             overflow: hidden;
             img {
@@ -131,15 +157,36 @@ export default {
                 }
             }
         }
-    }  
+    }
     &-click {
         width: 100%;
         height: 40px;
         position: fixed;
         background: #fff;
         bottom: 50px;
-        border-top:1px solid #f2f2f2;
-        border-bottom:1px solid #f2f2f2;
+        border-top: 1px solid #f2f2f2;
+        border-bottom: 1px solid #f2f2f2;
+        &-p {
+            display: block;
+            width: 40%;
+            float: left;
+            height:40px;
+            margin-top: 0;
+            line-height: 40px;
+            &-allText {
+                float: left;
+                font-size: 14px;
+                color: #666;
+                margin-left: 10px;
+            }
+            &-allPrice {
+                float: left;
+                margin-left: 10px;
+                margin-right: 10px;
+                font-size: 14px;
+                color: #f44;
+            }
+        }
         &-qrcode {
             float: right;
             margin-right: 10px;
@@ -155,7 +202,7 @@ export default {
         width: 100%;
         padding-bottom: 10px;
         overflow: hidden;
-        margin-top: 20px;
+        margin-top: 10px;
         &-p {
             height: 20px;
             margin: 0;

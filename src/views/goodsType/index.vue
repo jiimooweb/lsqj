@@ -2,7 +2,7 @@
     <div class="typePage">
         <div class="typeList">
             <van-badge-group :active-key="activeKey" @change="onChange">
-                <van-badge :title="item.name | filterAn" v-if="item.sid !== 0" v-for="(item,index) in typeList" :key='index'/>
+                <van-badge :title="item.name | filterAn" v-for="(item,index) in typeList" :key='index'/>
             </van-badge-group>
         </div>
         <div class="goodsList">
@@ -40,6 +40,8 @@ export default {
     methods: {
         //切换列表
         onChange(key) {
+            console.log(this.typeList[key].id);
+            
             this.activeKey = key;
             this.currentId = this.typeList[key].id
             this.getGoods()
@@ -49,14 +51,19 @@ export default {
                 url:'mall-navs',
                 method:'get'
             }).then(res=>{
-                this.typeList = res.data
+                this.typeList = []
+                for(let i=0;i<res.data.length;i++){
+                    if(res.data[i].sid !== 0){
+                        this.typeList.push(res.data[i])
+                    }
+                }
                 this.currentId = this.typeList[0].id
                 this.getGoods()
             })
         },
         getGoods(){
             axios.request({
-                url:'mall-navs/'+this.currentId,
+                url:'mall/nav/'+this.currentId,
                 method:'get'
             }).then(res=>{
                 this.goodsList = []

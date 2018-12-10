@@ -152,7 +152,7 @@ export default {
     overflow-y: scroll;
     .loading{
         width: 100%;
-        height: 100%;
+        height: calc(100% - 50px);
         position: fixed;
         z-index: 10000000;
         background: #eee;

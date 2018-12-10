@@ -10,13 +10,13 @@
             <div class="order-list-item" v-for='(item,index) in orderList' :key='index'>
                 <div class="order-list-item-conter">
                     <div class="order-list-item-conter-img">
-                        <img :src="img">
+                        <img :src="item.goods[0].imgs[0].url">
                     </div>
                     <div class="order-list-item-conter-text">
-                        <p class="order-list-item-conter-text-name">苹果苹果苹果苹果苹果苹果苹果苹果苹果苹果苹果苹果苹果苹果</p>
+                        <p class="order-list-item-conter-text-name">{{item.body}}</p>
                         <p class="order-list-item-conter-text-price">
-                            <span class="order-list-item-conter-text-price-price">¥12</span>
-                            <span class="order-list-item-conter-text-price-piece">合计2件</span>
+                            <span class="order-list-item-conter-text-price-price">¥{{item.price}}</span>
+                            <span class="order-list-item-conter-text-price-piece">{{orderList[index].order_goods | returnNum}}</span>
                         </p>
                     </div>
                 </div>
@@ -31,6 +31,7 @@
 
 <script>
 import { Tab, Tabs, Button } from "vant";
+import axios from '../../public/axios';
 
 export default {
     components: {
@@ -59,30 +60,38 @@ export default {
                     key: "1"
                 }
             ],
-            orderList: [
-                {
-                    name: 1
-                },{
-                    name: 1
-                },{
-                    name: 1
-                },{
-                    name: 1
-                }
-            ],
+            orderList: [],
             img:
                 "https://camo.githubusercontent.com/8ef9e5d3ef085affbcabf7754b02312a4ea10039/68747470733a2f2f696d672e797a63646e2e636e2f7075626c69635f66696c65732f323031372f31322f31382f66643738636636626235643132653261313139643035373662656466643233302e706e67"
         };
+    },
+    filters:{
+        returnNum: function(ol){
+            let result = 0
+            for(let i = 0;i<ol.length;i++){
+                result += ol[i].num
+            }
+            return '合计：'+result+'件'
+        }
     },
     methods: {
         inOrderDetail() {
             this.$router.push("/orderDetail");
         },
         getOrder(){
-            
+            axios.request({
+                url:'mall/orders',
+                method:'get'
+            }).then(res=>{
+                console.log(res);
+                for(let i=0;i<res.data.data.length;i++){
+                    this.orderList.push(res.data.data[i])
+                }
+            })
         }
     },
     mounted() {
+        this.orderList = []
         this.getOrder()
     }
 };

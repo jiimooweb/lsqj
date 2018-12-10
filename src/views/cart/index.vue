@@ -146,7 +146,6 @@ export default {
     methods: {
         //删除产品
         deleteItem(index){
-            console.log(index);
             Dialog.confirm({
                     title: '确认删除',
                     message: '是否从购物车删除该商品?'
@@ -183,20 +182,53 @@ export default {
             localStorage.setItem('cartList',JSON.stringify(this.goods))
         },
         returnCheckedGoods() {
-            // console.log(this.checkedGoods);
+            console.log(this.checkedGoods);
         },
         formatPrice(price) {
             return price.toFixed(2);
         },
 
         onSubmit() {
-            Toast("点击结算");
+            let submitList = []
+            let indexList = []
+            this.goods.some((item,index) =>{
+                for(let i=0;i<this.checkedGoods.length;i++){
+                    if(item.good.id === this.checkedGoods[i]){
+                        submitList.push({id:item.good.id,num:item.num})
+                        indexList.push(index)
+                    }
+                }
+            })
+            //提交订单
+            axios.request({
+                url:'order/orders',
+                method:'post',
+                data:{
+                    type:"mall",
+                    goods:submitList,
+                    ps:''
+                }
+            }).then(res=>{
+                if(res.status === 1){
+                    Toast("订单创建成功");
+                    for(let i=0;i<indexList.length;i++){
+                        this.goods.splice(indexList[i],1)
+                    }
+                    localStorage.setItem('cartList',JSON.stringify(this.goods))
+                    this.$router.push({path:'orderDetail/id=' + res.id})
+                }else{
+                    Toast("订单创建失败");
+                    this.verificationCart()
+                }
+            })
         },
         //全选购物车
         allCheck() {
             if (this.isAll) {
                 for (let item in this.goods) {
-                    this.checkedGoods.push(this.goods[item].good.id);
+                    if(this.goods[item].good.error === 0){
+                        this.checkedGoods.push(this.goods[item].good.id);
+                    }
                 }
             } else {
                 this.checkedGoods = [];
@@ -234,8 +266,6 @@ export default {
                     .then(res => {
                         for (let i = 0; i < this.goods.length; i++) {
                             this.goods[i].good = res.data[i];
-                            console.log();
-                            
                         }
                     });
             }
