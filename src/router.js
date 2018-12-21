@@ -57,6 +57,12 @@ const routes = [
     meta: {
       title: '分享'
     }
+  },{
+    name: 'lottery',
+    component: () => import('./views/lottery'),
+    meta: {
+      title: '抽奖活动'
+    }
   },
   {
     name: 'shareManage',
