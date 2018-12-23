@@ -16,6 +16,7 @@
 import { Tabbar, TabbarItem } from "vant";
 import Token from "./public/util.js";
 const token = new Token();
+
 export default {
     components: {
         [Tabbar.name]: Tabbar,
