@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="turnPage">
+        <div class="turnPage" v-if="hasData">
             <div class="btnPage">
                 <p class='rule' @click="showRule">抽奖规则</p>
                 <p class="prize" @click="showPrize">奖品池</p>
@@ -9,31 +9,39 @@
             <img :class="'pointPic ' + (rotateClass?'rotate':'')" :style="'transform: rotate('+this.deg+'deg)'" :src="pointer_img"
                 @click="getResult()">
             <p class="clickTip" v-show='!isTurn' @click="getResult()">GO!</p>
-            <p class="number" v-if="lotteryData !== ''">所剩积分：{{lotteryData.fan_data.number}}</p>
+            <p class="number" v-if="lotteryData !== ''">所剩次数：{{lotteryData.fan_data.number}}</p>
         </div>
         <van-dialog v-model="ruleDialog" class="rulePage">
             <p class="title">抽奖规则</p>
             <div class="ruleText">
-                <p>1.xxxxxxxxxxxxxxxxxxxxx</p>
-                <p>2.xxxxxxxxxxxxxxxxxxxxx</p>
-                <p>3.xxxxxxxxxxxxxxxxxxxxx</p>
-                <p>4.xxxxxxxxxxxxxxxxxxxxx</p>
-                <p>5.xxxxxxxxxxxxxxxxxxxxx</p>
+                <p>1.每人有一次抽奖机会,以后或有其他活动能兑换抽奖次数,敬请留意参与。</p>
+                <p>2.获得的奖品会放入个人卡包,实体物品也以兑换卷的形式存入,到店使用。</p>
+                <p>3.绿水清江拥有活动最终解释权</p>
             </div>
         </van-dialog>
         <van-dialog v-model="prizeDialog" class="rulePage">
-            <p class="title">奖品池</p>
-            <div class="ruleText">
-                <p v-for="(item,index) in lotteryData.prizes" v-if="item.coupon_id !== 0" :key='index'>第{{index+1}}等奖：{{item.coupon.name}}</p>
-            </div>
+            <van-tabs color='#0079f3'>
+                <van-tab title="奖品池" style="height:200px;overflow-y:scroll;">
+                    <div class="ruleText">
+                        <p v-for="(item,index) in lotteryData.prizes" v-if="item.coupon_id !== 0" :key='index'>第{{index+1}}等奖：{{item.coupon.name}}</p>
+                    </div>
+                </van-tab>
+                <van-tab title="我的奖品" style="height:200px;overflow-y:scroll;">
+                    <div class="ruleText">
+                        <p v-for="(item,index) in historyList" v-if="item.coupon_id !== 0" :key='index'>{{item.coupon_name}}</p>
+                    </div>
+                </van-tab>
+            </van-tabs>
+            
         </van-dialog>
     </div>
 </template>
 
 <script>
-import { Dialog } from "vant";
+import { Dialog, Tab, Tabs  } from "vant";
 import Vue from "vue";
 Vue.use(Dialog);
+Vue.use(Tab).use(Tabs);
 import axios from "../../public/axios.js";
 import Token from "../../public/util.js";
 const token = new Token();
@@ -45,6 +53,7 @@ export default {
     },
     data() {
         return {
+            hasData:false,
             turn_img: "",
             pointer_img: "",
             lotteryData: '',
@@ -55,7 +64,8 @@ export default {
             number: 0,
             ruleDialog:false,
             prizeDialog:false,
-            userData:{}
+            userData:{},
+            historyList:[]
         };
     },
     watch: {
@@ -64,6 +74,15 @@ export default {
         }
     },
     methods: {
+        //获取奖品历史
+        getHistory(){
+            axios.request({
+                url:'lottery/fan/history',
+                method:'get'
+            }).then(res=>{
+                this.historyList = res.data.data
+            })
+        },  
         //获取用户资料
         getUesr() {
             axios
@@ -88,11 +107,12 @@ export default {
         },
         fx(path) {
             // alert('开始设置config')
+            
             let config = {
-                title: lotteryData.activity.name, // 分享标题
-                desc: lotteryData.activity.introduce, // 分享描述
+                title: this.lotteryData.activity.name, // 分享标题
+                desc: this.lotteryData.activity.introduce, // 分享描述
                 link: "https://zhlsqj.com/#/lottery", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-                imgUrl: lotteryData.activity.img, // 分享图标
+                imgUrl: this.lotteryData.activity.img, // 分享图标
                 success: function() {
                     // 分享成功
                     // Toast.success("分享成功");
@@ -116,14 +136,19 @@ export default {
                 })
                 .then(res => {
                     this.lotteryData = res.data;
+                    
                     this.turn_img = this.lotteryData.activity.turn_img;
                     this.pointer_img = this.lotteryData.activity.pointer_img;
+                    this.number = this.lotteryData.fan_data.number
+                    this.hasData = true
+                    this.getHistory()
+                    this.getUesr()
                 });
         },
         getResult() {
             if (!this.hasNum && !this.isTurn) {
                 Dialog.alert({
-                    message: "积分不足，无法抽奖"
+                    message: "所剩次数不足，无法抽奖"
                 }).then(() => {
                     // on close
                 });
@@ -168,7 +193,6 @@ export default {
     mounted() {
         token.initToken(this.$route.query.token);
         this.getLotteryData();
-        this.getUesr()
     }
 };
 </script>
@@ -179,9 +203,10 @@ export default {
         font-size: 15px;
     }
     .ruleText{
+        padding: 10px 0 20px;
         p{
             font-size: 14px;
-            text-align: left;
+            text-align: center;
             padding: 0 20px;
         }
     }
