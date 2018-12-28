@@ -63,6 +63,12 @@ const routes = [
         meta: {
             title: '抽奖活动'
         }
+    },{
+        name: 'coupons',
+        component: () => import('./views/coupons'),
+        meta: {
+            title: '奖券'
+        }
     },
     {
         name: 'shareManage',

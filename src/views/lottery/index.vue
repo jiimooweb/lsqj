@@ -1,5 +1,10 @@
 <template>
     <div>
+        <van-popup v-model="noSubscribe" class="subscribeModal" :close-on-click-overlay='false'>
+            <p class="qrcodeText">请先关注‘绿水清江’公众号</p>
+            <p class="qrcodeText">(关注后请刷新本页面)</p>
+            <img src="../../assets/qrcode.jpg" class="qrcode">
+        </van-popup>
         <div class="turnPage" v-if="hasData">
             <div class="btnPage">
                 <p class='rule' @click="showRule">抽奖规则</p>
@@ -38,7 +43,7 @@
 </template>
 
 <script>
-import { Dialog, Tab, Tabs  } from "vant";
+import { Dialog, Tab, Tabs,Popup  } from "vant";
 import Vue from "vue";
 Vue.use(Dialog);
 Vue.use(Tab).use(Tabs);
@@ -50,9 +55,11 @@ const wxa = new wxApi();
 export default {
     components: {
         // [Dialog.name]: Dialog
+        [Popup.name]: Popup,
     },
     data() {
         return {
+            noSubscribe:false,
             hasData:false,
             turn_img: "",
             pointer_img: "",
@@ -96,6 +103,10 @@ export default {
                     }
                 })
                 .then(res => {
+                    this.isSubscribe = res.data.subscribe;
+                    if (this.isSubscribe === 0) {
+                        this.noSubscribe = true;
+                    }
                     this.userData.nickname = res.data.nickname;
                     this.userData.headimgurl = res.data.headimgurl;
                     this.userData.id = res.data.id;
@@ -198,6 +209,22 @@ export default {
 </script>
 
 <style lang='less'>
+.subscribeModal {
+    width: 80%;
+    padding-bottom: 20px;
+    border-radius: 15px;
+}
+.qrcodeText {
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+}
+.qrcode {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    height: auto;
+}
 .rulePage{
     .title{
         font-size: 15px;
