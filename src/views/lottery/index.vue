@@ -28,7 +28,7 @@
             <van-tabs color='#0079f3'>
                 <van-tab title="奖品池" style="height:200px;overflow-y:scroll;">
                     <div class="ruleText">
-                        <p v-for="(item,index) in lotteryData.prizes" v-if="item.coupon_id !== 0" :key='index'>第{{index+1}}等奖：{{item.coupon.name}}</p>
+                        <p v-for="(item,index) in lotteryData.prizes" v-if="item.coupon_id !== 0" :key='index'>{{item.orderby_name}}：{{item.coupon.name}}</p>
                     </div>
                 </van-tab>
                 <van-tab title="我的奖品" style="height:200px;overflow-y:scroll;">
@@ -87,7 +87,7 @@ export default {
                 url:'lottery/fan/history',
                 method:'get'
             }).then(res=>{
-                this.historyList = res.data.data
+                this.historyList = res.data
             })
         },  
         //获取用户资料
