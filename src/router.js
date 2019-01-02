@@ -69,6 +69,12 @@ const routes = [
         meta: {
             title: '奖券'
         }
+    },{
+        name: 'destroyCoupon',
+        component: () => import('./views/destroyCoupon'),
+        meta: {
+            title: '核销奖券'
+        }
     },
     {
         name: 'shareManage',

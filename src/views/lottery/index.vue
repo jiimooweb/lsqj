@@ -5,6 +5,9 @@
             <p class="qrcodeText">(关注后请刷新本页面)</p>
             <img src="../../assets/qrcode.jpg" class="qrcode">
         </van-popup>
+        <van-popup v-model="activeNull" class="subscribeModal" style="padding-bottom:0;" :close-on-click-overlay='false'>
+            <p style="font-size:16px;padding:20px 0;">活动已结束，敬请期待下次抽奖活动！</p>
+        </van-popup>
         <div class="turnPage" v-if="hasData">
             <div class="btnPage">
                 <p class='rule' @click="showRule">抽奖规则</p>
@@ -59,6 +62,7 @@ export default {
     },
     data() {
         return {
+            activeNull:false,
             noSubscribe:false,
             hasData:false,
             turn_img: "",
@@ -146,6 +150,10 @@ export default {
                     method: "get"
                 })
                 .then(res => {
+                    if(res.data == '活动未开'){
+                        this.activeNull = true
+                        return
+                    }
                     this.lotteryData = res.data;
                     
                     this.turn_img = this.lotteryData.activity.turn_img;

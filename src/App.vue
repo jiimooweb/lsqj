@@ -28,7 +28,7 @@ export default {
             isShowTabbar: true,
 
             //不需要添加tabbar的路由name
-            showItem: ["share", "shareManage", "goodsList","lottery","coupons"]
+            showItem: ["share", "shareManage", "goodsList","lottery","coupons","destroyCoupon"]
         };
     },
     watch: {
