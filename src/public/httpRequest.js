@@ -43,8 +43,8 @@ class httpRequest {
               response
             }
             */
-            if(error.response.status){
-                token.initToken();
+            if(error.response.status === 401){
+                token.getToken();
             }
             // 对响应错误做点什么
             return Promise.reject(error)
@@ -58,9 +58,11 @@ class httpRequest {
             baseURL: baseURL,
             // timeout: 2000,
             headers: {
-                token:localStorage.getItem("token") || token.getUrlparam('token')
+                // token: (token.getUrlparam('token') || localStorage.getItem("token"))
+                token: 123
             }
-        }
+        }   
+        
         return Axios.create(conf)
     }
     // 合并请求实例
@@ -70,9 +72,19 @@ class httpRequest {
     // 请求实例
     request(options) {
         var instance = this.create()
+        
         this.interceptors(instance, options.url)
         options = Object.assign({}, options)
         this.queue[options.url] = instance
+        if(!token.getUrlparam('token') || !localStorage.getItem("token")){
+            // token.getToken()
+        }
+        let tooken = token.getUrlparam('token') || localStorage.getItem("token")
+        
+        localStorage.setItem('token',(token.getUrlparam('token') || localStorage.getItem("token")))
+        options.headers = {token : tooken}
+        
+        
         return instance(options)
     }
 }

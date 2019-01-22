@@ -7,18 +7,18 @@
             @load="onLoad"
         >
             <div class="goodsPage">
-                <div class="goodItem" v-for="(item,index) in 4" :key='index' @click="returnDetail(4)">
+                <div class="goodItem" v-for="(item,index) in goodsList" :key='index' @click="returnDetail(item.id)">
                     <div class="goodImg">
-                        <img src="http://download.rdoorweb.com/20181204/bbc1fdc5e7a882da726f95bcf1881786.jpg">
+                        <img :src="item.imgs[0].url">
                     </div>
                     <div class="goodText">
                         <p class="goodText-title">
-                            <van-tag type="danger" class="goodText-title-tag">VIP</van-tag>
-                            <a class="goodText-title-a">这是标题这是标题这是标题这是标题这是标题这是标题这是标题这是标题这是标题</a>
+                            <van-tag type="danger" class="goodText-title-tag">{{item.type==='discount'?'优惠':(item.type==='member'?'会员':(item.type==='group'?'团购':'一般'))}}</van-tag>
+                            <a class="goodText-title-a">{{item.name}}</a>
                         </p>
                         <p class="goodText-price">
-                            <span class="goodText-price-new">¥18元</span>
-                            <span class="goodText-price-old">20元</span>
+                            <span class="goodText-price-new">¥{{item.price}}元</span>
+                            <span class="goodText-price-old" v-if="item.type === 'discount' || item.type === 'member' || item.type === 'group'">20元</span>
                         </p>
                     </div>
                 </div>
@@ -29,6 +29,7 @@
 
 <script>
 import { Tag, List } from "vant";
+import axios from '../../public/axios';
 export default {
     components: {
         [List.name]: List,
@@ -65,9 +66,23 @@ export default {
         returnDetail(id){
             // console.log(id);
             this.$router.push({path:'goods?id='+id})
+        },
+
+        getGoodsList(){
+            axios.request({
+                url:'mall/' +  this.$route.query.id,
+                method:'get'
+            }).then(res=>{
+                console.log(res);
+                this.goodsList = res.data.data
+            })
         }
+        
     },
-    mounted() {}
+    mounted() {
+        console.log(this.$route.query.id);
+        this.getGoodsList()
+    }
 };
 </script>
 

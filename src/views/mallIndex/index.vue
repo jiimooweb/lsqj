@@ -29,13 +29,13 @@
         <div class="type">
             <div class="type1">
                 <van-cell
-                    title="精选商品"
+                    title="热卖商品"
                     is-link
                     :border='false'
                     to='/goodsList?id=generals'
                 />
                 <div class="type1List">
-                    <div class="type1List-item" v-for="(item,index) in type1List" v-if="index<5" :key='index'>
+                    <div class="type1List-item" v-for="(item,index) in general" :key='index' @click="returnDetail(item.id)">
                         <div class="type1List-item-img">
                             <img :src="item.imgs[0].url">
                         </div>
@@ -48,15 +48,64 @@
                     </div>
                 </div>
             </div>
-            <div class="type2">
+            <div class="type2" v-if="discount.length > 0">
+                <van-cell
+                    title="优惠推荐"
+                    is-link
+                    :border='false'
+                    to='/goodsList?id=discounts'
+                />
+                <div class="type1List">
+                    <div class="type1List-item" v-for="(item,index) in discount" :key='index' @click="returnDetail(item.id)">
+                        <div class="type1List-item-img">
+                            <img :src="item.imgs[0].url">
+                        </div>
+                        <p class="type1List-item-text">
+                            {{item.name}}
+                        </p>
+                        <p class="type1List-item-price">
+                            <span class="type1List-item-price-new">
+                                ¥{{item.discount}}<br/>
+                                <span class="type1List-item-price-new-dec">优惠价</span>
+                            </span>
+                            <span class="type1List-item-price-old">
+                                ¥{{item.price}}<br/>
+                                <span class="type1List-item-price-old-dec">原价</span>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="type1" v-if="member.length > 0">
                 <van-cell
                     title="会员专享"
                     is-link
                     :border='false'
-                    to='/goodsList?id=generals'
+                    to='/goodsList?id=members'
                 />
                 <div class="type1List">
-                    <div class="type1List-item" v-for="(item,index) in type1List" v-if="index<5" :key='index'>
+                    <div class="type1List-item" v-for="(item,index) in member" :key='index' @click="returnDetail(item.id)">
+                        <div class="type1List-item-img">
+                            <img :src="item.imgs[0].url">
+                        </div>
+                        <p class="type1List-item-text">
+                            {{item.name}}
+                        </p>
+                        <p class="type1List-item-price">
+                            ¥{{item.price}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="type2" v-if="group.length > 0">
+                <van-cell
+                    title="团购商品"
+                    is-link
+                    :border='false'
+                    to='/goodsList?id=groups'
+                />
+                <div class="type1List">
+                    <div class="type1List-item" v-for="(item,index) in group" :key='index' @click="returnDetail(item.id)">
                         <div class="type1List-item-img">
                             <img :src="item.imgs[0].url">
                         </div>
@@ -96,7 +145,11 @@ export default {
         return {
             loading:true,
             swipeList: [],
-            type1List:[]
+            type1List:[],
+            discount:[],
+            general:[],
+            group:[],
+            member:[]
         };
     },
     methods: {
@@ -126,13 +179,21 @@ export default {
         },
         getGoods(){ 
             axios.request({
-                url:'mall/generals',
+                url:'mall/hots',
+                // url:'mall/generals',
                 method:'get'
             }).then(res=>{
-                this.type1List = res.data.data
+                this.discount = res.discount
+                this.general = res.general
+                this.group = res.group
+                this.member = res.member
                 this.loading = false
             })
-        }
+        },
+        returnDetail(id){
+            // console.log(id);
+            this.$router.push({path:'goods?id='+id})
+        },
     },
     mounted() {
         this.getAllSwipe();
@@ -170,12 +231,12 @@ export default {
         padding-bottom: 10px;
         &-item{
             width: calc(100% / 2);
-            height: 70px;
+            height: 50px;
             // background: #666;
             float: left;
             img{
-                width: 50px;
-                height: 50px;
+                width: 30px;
+                height: 30px;
                 display: block;
                 margin: 0 auto;
             }
@@ -310,7 +371,7 @@ export default {
                     }
                     &-old{
                         float: left;
-                        margin-right: 30px;
+                        margin-left: 50px;
                         color: #aaa;
                         &-dec{
                             color: #aaa;

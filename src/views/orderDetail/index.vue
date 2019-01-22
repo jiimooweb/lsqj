@@ -28,19 +28,19 @@
         <p class="detail-page-detail-hen"></p>
         <div class="detail-page-detail">
             <!-- discount_type 0 无 -->
-            <!-- <p class="detail-page-detail-p">
+            <p class="detail-page-detail-p">
                 <span class="detail-page-detail-p-text">商品总价</span>
-                <span class="detail-page-detail-p-price">¥ 52</span>
-            </p> -->
+                <span class="detail-page-detail-p-price">¥ {{orderData.price}}</span>
+            </p>
             <!-- discount_type 1 满减 -->
-            <p class="detail-page-detail-p" v-if="orderData.discount_type === 1">
+            <p class="detail-page-detail-p">
                 <span class="detail-page-detail-p-text">满减</span>
-                <span class="detail-page-detail-p-price">¥ {{orderData.discount}}</span>
+                <span class="detail-page-detail-p-price">- ¥ {{orderData.discount}}</span>
             </p>
             <!-- discount_type 2 折扣 -->
-            <p class="detail-page-detail-p" v-if="orderData.discount_type === 2">
+            <p class="detail-page-detail-p">
                 <span class="detail-page-detail-p-text">折扣</span>
-                <span class="detail-page-detail-p-price">¥ {{orderData.discount}}</span>
+                <span class="detail-page-detail-p-price">- ¥ {{orderData.discount}}</span>
             </p>
             <!-- <p class="detail-page-detail-hen"></p> -->
             <!-- <p class="detail-page-detail-p">
@@ -205,7 +205,7 @@ export default {
         margin-top: 10px;
         &-p {
             height: 20px;
-            margin: 0;
+            margin: 5px 0;
             &-text {
                 float: left;
                 font-size: 14px;

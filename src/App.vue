@@ -26,9 +26,9 @@ export default {
         return {
             active: 0,
             isShowTabbar: true,
-
+            tabList:['mallIndex','goodsType','cart','order'],
             //不需要添加tabbar的路由name
-            showItem: ["share", "shareManage", "goodsList","lottery","coupons","destroyCoupon"]
+            showItem: ['goods',"share", "shareManage", "goodsList","lottery","coupons","destroyCoupon"]
         };
     },
     watch: {
@@ -38,6 +38,23 @@ export default {
     },
     mounted() {
         this.returnShowTabbar();
+        // console.log(this.$router.history.current);
+        
+        // for(let i=0;i<this.tabList.length;i++){
+        //     // console.log(typeof(this.$router.history.current.name));
+        //     // console.log(typeof(this.tabList[i]));
+
+        //     console.log(this.$router.history.current.name + ' == ' + this.tabList[i]);
+        //     console.log(this.$router.history.current.name == this.tabList[i]);
+            
+        //     if(this.$router.history.current.name == this.tabList[i]){
+        //         console.log(i);
+        //         this.active = i
+        //     }
+        // }
+        if(this.$router.history.current.query.token !== ''){
+            localStorage.setItem('token',this.$router.history.current.query.token)
+        }
     },
     methods: {
         returnShowTabbar() {

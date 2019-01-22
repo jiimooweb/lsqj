@@ -16,12 +16,14 @@ class Token {
         if (r != null) {
             return decodeURIComponent(r[2]);
         }
+        
     };
     localStorageHasToken() {
         //1、查看缓存是否有token
         // console.log(!(localStorage.getItem('token') == null) && typeof(localStorage.getItem('token')) != "undefined");
+        console.log(localStorage.getItem('token') != "undefined");
 
-        return !(localStorage.getItem('token') == null) && typeof (localStorage.getItem('token')) != "undefined"
+        return !(localStorage.getItem('token') == null) && localStorage.getItem('token') != "undefined"
     }
 
     linkHasToken(tooken) {
@@ -33,28 +35,34 @@ class Token {
         //验证token是否过期
         //wechat/verify
         //post
+        
+        // return
         axios.request({
             url: 'https://zhlsqj.com/wechat/verify',
             method: 'post',
             headers: {
-                token: this.token
+                token: this.token || localStorage.getItem("token")
             },
             data: {}
         }).then(res => {
             // console.log(res);
             // alert('token没过期')
+            localStorage.setItem('token',(localStorage.getItem("token") || this.token))
         }).catch(err => {
-            // alert('重新获取token')
-            localStorage.setItem('hasToken', '过期')
-            localStorage.clear('token')
+            // console.log('重新获取token');
+            // console.log(localStorage.getItem("token"));
+            
             // return
+            // localStorage.setItem('hasToken', '过期')
+            // localStorage.clear('token')
+            // return
+            alert('重新获取')
             this.getToken()
         })
 
     }
 
     getToken() {
-        localStorage.clear('token')
         //3、重新获取token
         if (env === 'development') {
             //本地测试使用
@@ -79,14 +87,14 @@ class Token {
         if (this.localStorageHasToken()) {
             // alert('缓存有token')
             this.token = localStorage.getItem('token')
-            this.verifyToken()
-        } else if (this.linkHasToken(tooken)) {
+            // this.verifyToken()
+        } else if (tooken) {
             // alert('连接有token')
+            // this.verifyToken()
             this.token = tooken
             localStorage.setItem('token', tooken)
         } else {
             // return
-            // alert('啥token都没有')
             this.getToken()
         }
     }

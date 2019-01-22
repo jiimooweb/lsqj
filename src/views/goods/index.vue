@@ -25,7 +25,7 @@
                     <div class="goods-price">{{ formatPrice(goods.price) }}</div>
                 </van-cell>
                 <van-cell class="goods-express">
-                    <van-col span="12">月销：{{ goods.monthly_sales }}</van-col>
+                    <van-col span="12">销量：{{ goods.monthly_sales }}</van-col>
                     <van-col span="12">库存：{{ goods.stock }}</van-col>
                     <!-- <van-col span="8">规格: 500g/件</van-col> -->
                 </van-cell>
@@ -43,6 +43,7 @@
                 icon="cart"
                 @click="onClickCart"
                 :info="cartLength"
+                v-if='goodsType !== "group"'
             >
                 购物车
             </van-goods-action-mini-btn>
@@ -52,9 +53,16 @@
             <van-goods-action-big-btn
                 primary
                 @click="sorry"
-                v-if='goodsType === 1'
+                v-if='goodsType !== "group"'
             >
                 立即购买
+            </van-goods-action-big-btn>
+            <van-goods-action-big-btn
+                primary
+                @click="sorry"
+                v-if='goodsType === "group"'
+            >
+                加入团购
             </van-goods-action-big-btn>
         </van-goods-action>
     </div>
@@ -226,7 +234,7 @@ export default {
         position: absolute;
         padding-bottom: 50px;
         width: 100%;
-        height: calc(100% - 50px - 50px);
+        height: calc(100% - 50px);
         overflow-x: hidden;
         overflow-y: scroll;
         &-swipe {
@@ -266,7 +274,7 @@ export default {
         }
     }
     .goods-click {
-        bottom: 50px;
+        bottom: 0px;
     }
 }
 </style>
