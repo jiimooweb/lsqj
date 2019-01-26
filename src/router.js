@@ -96,6 +96,20 @@ const routes = [
         meta: {
             title: '分类列表'
         }
+    },
+    {
+        name: 'reservation',
+        component: () => import('./views/reservation'),
+        meta: {
+            title: '活动预约'
+        }
+    },
+    {
+        name: 'paySuccess',
+        component: () => import('./views/paySuccess'),
+        meta: {
+            title: '支付成功'
+        }
     }
 ];
 
