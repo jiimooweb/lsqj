@@ -11,7 +11,7 @@
                 <p class="detail-page-conter-text-name">{{orderData.goods[index].name}}</p>
                 <p class="detail-page-conter-text-price">
                     <span class="detail-page-conter-text-price-piece">×{{item.num}}</span>
-                    <span class="detail-page-conter-text-price-price">¥{{item.discount}}</span>
+                    <span class="detail-page-conter-text-price-price">¥{{item.price}}</span>
                 </p>
             </div>
         </div>
@@ -20,10 +20,14 @@
                 <span class="detail-page-click-p-allText">订单总价</span>
                 <span class="detail-page-click-p-allPrice">¥ {{this.orderData.price}}</span>
             </p>
-            <van-button v-if="orderData.pay_state === 0" class="detail-page-click-intoDefail" round type="danger" size="small" @click="getOrder()">支付</van-button>
-            <van-button v-if="orderData.pay_state === 1 && use_state === 0" class="detail-page-click-qrcode" round type="primary" size="small">核销二维码</van-button>
-            <van-button v-if="orderData.pay_state === 0" class="detail-page-click-intoDefail" round type="warning" size="small" @click="getOrder()">取消订单</van-button>
-            <van-button v-if="orderData.pay_state === 1 && use_state === 0" class="detail-page-click-intoDefail" round type="warning" size="small" @click="getOrder()">申请退款</van-button>
+            <van-button v-if="orderData.pay_state === 0" class="detail-page-click-intoDefail" round type="danger" size="small"
+                @click="payOrder()">支付</van-button>
+            <van-button v-if="orderData.pay_state === 1 && use_state === 0" class="detail-page-click-qrcode" round type="primary"
+                size="small">核销二维码</van-button>
+            <van-button v-if="orderData.pay_state === 0" class="detail-page-click-intoDefail" round type="warning" size="small"
+                @click="cancelOrder()">取消订单</van-button>
+            <van-button v-if="orderData.pay_state === 1 && use_state === 0" class="detail-page-click-intoDefail" round
+                type="warning" size="small" @click="returnOrder()">申请退款</van-button>
         </div>
         <p class="detail-page-detail-hen"></p>
         <div class="detail-page-detail">
@@ -52,15 +56,19 @@
 </template>
 
 <script>
-import { Button } from "vant";
+import { Button,Toast } from "vant";
 import axios from "../../public/axios";
+import wxApi from "../../public/wx.js";
+const wxa = new wxApi();
 export default {
     components: {
-        [Button.name]: Button
+        [Button.name]: Button,
+        [Toast.name]: Toast,
     },
     data() {
         return {
-            orderData: ""
+            orderData: "",
+            config: ""
         };
     },
     methods: {
@@ -72,8 +80,65 @@ export default {
                 })
                 .then(res => {
                     this.orderData = res.data[0];
+                    console.log(this.orderData);
                 });
-        }
+        },
+        payOrder() {
+            axios
+                .request({
+                    url: "wechat/unify",
+                    method: "post",
+                    data: {
+                        id: this.orderData.id
+                    }
+                })
+                .then(res => {
+                    this.config = res.payment
+                    // wxa.wxInit(localStorage.getItem("token"), this.config, location.href);
+                    this.onBridgeReady()
+                });
+        },
+        //请求支付
+        onBridgeReady() {
+            WeixinJSBridge.invoke(
+                "getBrandWCPayRequest",
+                this.config,
+                function(res) {
+                    if (res.err_msg == "get_brand_wcpay_request:ok") {
+                        Toast("成功~");
+                        // console.log('返回了ok提示：');
+                        // console.log(res);
+                        
+                        // 使用以上方式判断前端返回,微信团队郑重提示：
+                        //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                    }else{
+                        // console.log('失败');
+                        Toast("失败~");
+                        // console.log(res);
+                    }
+                }
+            );
+            // if (typeof WeixinJSBridge == "undefined") {
+            //     if (document.addEventListener) {
+            //         document.addEventListener(
+            //             "WeixinJSBridgeReady",
+            //             onBridgeReady,
+            //             false
+            //         );
+            //     } else if (document.attachEvent) {
+            //         document.attachEvent("WeixinJSBridgeReady", onBridgeReady);
+            //         document.attachEvent(
+            //             "onWeixinJSBridgeReady",
+            //             onBridgeReady
+            //         );
+            //     }
+            // } else {
+            //     onBridgeReady();
+            // }
+        },
+
+        cancelOrder() {},
+        returnOrder() {}
     },
     mounted() {
         this.getOrderData();
@@ -170,7 +235,7 @@ export default {
             display: block;
             width: 40%;
             float: left;
-            height:40px;
+            height: 40px;
             margin-top: 0;
             line-height: 40px;
             &-allText {

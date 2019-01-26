@@ -215,7 +215,7 @@ export default {
                         this.goods.splice(indexList[i],1)
                     }
                     localStorage.setItem('cartList',JSON.stringify(this.goods))
-                    this.$router.push({path:'orderDetail/id=' + res.id})
+                    this.$router.push({path:'/orderDetail?id=' + res.id})
                 }else{
                     Toast("订单创建失败");
                     this.verificationCart()

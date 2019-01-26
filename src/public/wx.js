@@ -43,7 +43,7 @@ class wxApi{
         wx.updateTimelineShareData(config);
         wx.onMenuShareAppMessage(config);
         wx.onMenuShareTimeline(config);
-        
+        // wx.getBrandWCPayRequest(config)
     }
 }
 

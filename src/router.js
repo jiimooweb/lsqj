@@ -110,7 +110,39 @@ const routes = [
         meta: {
             title: '支付成功'
         }
-    }
+    },{
+        name: 'ticket',
+        component: () => import('./views/ticketPage'),
+        meta: {
+            title: '套餐'
+        },
+        children:[
+            {
+                name: 'ticketList',
+                path: '/ticketList',
+                component: () => import('./views/ticketList'),
+                meta: {
+                    title: '套餐列表'
+                }
+            },
+            {
+                name: 'ticketDetail',
+                path: '/ticketDetail',
+                component: () => import('./views/ticketDetail'),
+                meta: {
+                    title: '套餐详情'
+                }
+            },
+            {
+                name: 'ticketOrder',
+                path: '/ticketOrder',
+                component: () => import('./views/ticketOrder'),
+                meta: {
+                    title: '套餐订单'
+                }
+            }
+        ]
+    },
 ];
 
 // add route path

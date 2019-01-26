@@ -26,7 +26,7 @@
                     <van-button class="order-list-item-click-qrcode" round type="default" size="small">核销二维码</van-button>
                 </div>
             </div>
-            <p>没有更多数据</p>
+            <p v-if="orderList.length === 0" class="noData">没有更多数据</p>
         </van-list>
         
         <!-- <div class="order-list">
@@ -157,7 +157,8 @@ export default {
                         method: "post",
                         data: {
                             pay_state: pay,
-                            use_state: use
+                            use_state: use,
+                            type:'mall'
                         }
                     })
                     .then(res => {
@@ -284,5 +285,8 @@ export default {
             }
         }
     }
+}
+.noData{
+    font-size: 16px;
 }
 </style>

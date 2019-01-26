@@ -28,7 +28,7 @@ export default {
             isShowTabbar: true,
             tabList:['mallIndex','goodsType','cart','order'],
             //不需要添加tabbar的路由name
-            showItem: ['goods',"share", "shareManage", "goodsList","lottery","coupons","destroyCoupon","reservation","paySuccess"]
+            showItem: ['goods',"share", "shareManage", "goodsList","lottery","coupons","destroyCoupon","reservation","paySuccess","ticketList","ticketDetail","ticketOrder"]
         };
     },
     watch: {
@@ -76,8 +76,8 @@ export default {
     font-family: "Avenir", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
     color: #2c3e50;
+    text-align: center;
     /* margin-top: 60px; */
 }
 </style>
