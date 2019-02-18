@@ -10,46 +10,26 @@
             <div class="order-list-item" v-for='(item,index) in orderList' :key='index'>
                 <div class="order-list-item-conter">
                     <div class="order-list-item-conter-img">
-                        <img :src="item.goods[0].imgs[0].url">
+                        <img :src="item.fan_ticket[0].ticket.cover">
                     </div>
                     <div class="order-list-item-conter-text">
-                        <p class="order-list-item-conter-text-name">{{item.body}}</p>
+                        <p class="order-list-item-conter-text-name">{{item.fan_ticket[0].ticket.name}}</p>
                         <p class="order-list-item-conter-text-price">
-                            <span class="order-list-item-conter-text-price-price">¥{{item.price}}</span>
-                            <span class="order-list-item-conter-text-price-piece">{{orderList[index].order_goods |
-                                returnNum}}</span>
+                            <span class="order-list-item-conter-text-price-price">姓名：{{item.fan_ticket[0].name}}</span>
+                            <span class="order-list-item-conter-text-price-price">电话：{{item.fan_ticket[0].mobile}}</span>
+                            <span class="order-list-item-conter-text-price-price">预定日期：{{item.fan_ticket[0].booking_date}}</span>
+                            <!-- <span class="order-list-item-conter-text-price-piece">{{orderList[index].order_goods |
+                                returnNum}}</span> -->
                         </p>
                     </div>
                 </div>
                 <div class="order-list-item-click">
-                    <van-button class="order-list-item-click-intoDefail" round type="default" size="small" @click="inOrderDetail(item.id)">订单详情</van-button>
-                    <van-button class="order-list-item-click-qrcode" round type="default" size="small">核销二维码</van-button>
+                    <!-- <van-button class="order-list-item-click-intoDefail" round type="default" size="small" @click="inOrderDetail(item.id)">订单详情</van-button> -->
+                    <!-- <van-button class="order-list-item-click-qrcode" v-if="item.pay_state === 1" round type="default" size="small">核销二维码</van-button> -->
                 </div>
             </div>
             <p v-if="orderList.length === 0" class="noData">没有更多数据</p>
         </van-list>
-        
-        <!-- <div class="order-list">
-            <div class="order-list-item" v-for='(item,index) in orderList' :key='index'>
-                <div class="order-list-item-conter">
-                    <div class="order-list-item-conter-img">
-                        <img :src="item.goods[0].imgs[0].url">
-                    </div>
-                    <div class="order-list-item-conter-text">
-                        <p class="order-list-item-conter-text-name">{{item.body}}</p>
-                        <p class="order-list-item-conter-text-price">
-                            <span class="order-list-item-conter-text-price-price">¥{{item.price}}</span>
-                            <span class="order-list-item-conter-text-price-piece">{{orderList[index].order_goods |
-                                returnNum}}</span>
-                        </p>
-                    </div>
-                </div>
-                <div class="order-list-item-click">
-                    <van-button class="order-list-item-click-intoDefail" round type="default" size="small" @click="inOrderDetail(item.id)">订单详情</van-button>
-                    <van-button class="order-list-item-click-qrcode" round type="default" size="small">核销二维码</van-button>
-                </div>
-            </div>
-        </div> -->
     </div>
 </template>
 
@@ -106,20 +86,21 @@ export default {
     methods: {
         onLoad(){
             if(!this.isLast){
-                this.getOrder(this.currentIndex)
+                this.currentIndex++
+                this.getOrder(0)
             }
             this.finished = this.isLast
             this.loading = false
         },
         inOrderDetail(id) {
-            this.$router.push("/orderDetail?id=" + id);
+            localStorage.setItem('ticketId',id)
+            this.$router.push("/ticketOrderDetail");
         },
         changeIndex(index){
             this.isChangeIndex = true
             this.getOrder(index)
         },
         getOrder(index) {
-            this.currentIndex = index
             let pay, use, url;
             if (index === 1) {
                 pay = 0;
@@ -127,23 +108,29 @@ export default {
             } else if (index === 2) {
                 pay = 1;
                 use = 0;
-            } else {
+            } else if(index === 3) {
                 pay = 1;
                 use = 1;
+            }else{
+                pay = '';
+                use = '';
             }
+            console.log(index);
+            
             if (index === 0) {
+                //全部
                 axios
                     .request({
-                        url: "mall/order/type",
-                        method: "post",
-                        data:{
-                            type:'mall'
-                        }
+                        url: "order/tickets?pay_state="+ pay + "&use_state="+ use +"&page=" + this.currentIndex,
+                        method: "get",
                     })
                     .then(res => {
+                        // console.log(res);
+                        
                         if(this.isChangeIndex){
                             this.orderList = [];
                         }
+                        
                         for (let i = 0; i < res.data.data.length; i++) {
                             this.orderList.push(res.data.data[i]);
                         }
@@ -156,12 +143,12 @@ export default {
             } else {
                 axios
                     .request({
-                        url: "mall/order/state",
+                        url: "tickets/filter?page=" +this.currentIndex,
                         method: "post",
                         data: {
+                            type:'ticket',
                             pay_state: pay,
-                            use_state: use,
-                            type:'mall'
+                            use_state: use
                         }
                     })
                     .then(res => {
@@ -182,7 +169,7 @@ export default {
     },
     mounted() {
         this.orderList = [];
-        this.getOrder(0);
+        // this.getOrder(1);
     }
 };
 </script>
@@ -190,7 +177,7 @@ export default {
 <style lang="less">
 .order {
     width: 100%;
-    height: calc(100% - 50px);
+    height: 100%;
     overflow: hidden;
     &-title {
         position: fixed;
@@ -214,7 +201,7 @@ export default {
     &-list {
         position: absolute;
         width: 100%;
-        height: calc(100% - 50px - 50px);
+        height: calc(100% - 50px);
         left: 0;
         padding-bottom: 10px;
         overflow-y: scroll;
@@ -257,17 +244,19 @@ export default {
                         -webkit-box-orient: vertical;
                         -webkit-line-clamp: 2;
                         overflow: hidden;
-                        height: 40px;
+                        height: 20px;
                     }
                     &-price {
                         &-price {
-                            color: #f44;
-                            float: right;
-                            padding-left: 10px;
+                            color: #aaa;
+                            float: left;
+                            width: 100%;
+                            // padding-left: 10px;
                         }
                         &-piece {
                             color: #aaa;
-                            float: right;
+                            float: left;
+                            width: 100%;
                             font-size: 12px;
                             line-height: 22px;
                         }

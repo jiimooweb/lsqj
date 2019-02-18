@@ -2,29 +2,24 @@
     <div class="page">
         <div class="package">
             <div class="pimg">
-                <img src="https://download.rdoorweb.com/20190125/5307bb9e79737088f91fbc95b97a135e.jpg" alt="" srcset="">
+                <img :src="ticketData.cover">
             </div>
             <div class="info">
                 <div class="name">
-                    烧烤套餐（5-10人）
+                    {{ticketData.name}}
                 </div>
-                <div class="remake">适合5-10人选购</div>
-                <div class="price">￥100</div>
+                <div class="remake">{{ticketData.remark}}</div>
+                <div class="price">￥{{ticketData.price}}</div>
             </div>
         </div>
         <div class="row">
             <div class="left">数量</div>
-            <!-- <div class="right-num">
-                <div class="reduce">-</div>
-                <span class="num">1</span>
-                <div class="add">+</div>
-            </div> -->
-            <van-stepper v-model="num" />
+            <van-stepper v-model="num" :max="ticketData.daily_inventory" />
         </div>
         <div class="line"></div>
         <div class="row">
             <div class="left">小计</div>
-            <div class="right" style="color:#F56C6C">￥100</div>
+            <div class="right" style="color:#F56C6C">￥{{num * ticketData.price}}</div>
         </div>
         <!-- 先不实现，等以后再说 -->
         <div class="row mtop">
@@ -34,41 +29,111 @@
         <div class="line"></div>
         <div class="row">
             <div class="left">实付金额</div>
-            <div class="right" style="color:#F56C6C">￥100</div>
+            <div class="right" style="color:#F56C6C">￥{{num * ticketData.price}}</div>
         </div>
-
         <div class="row mtop">
+            <div class="left">姓名</div>
+            <input class="right-input" type="text" v-model="name">
+        </div>
+        <div class="line"></div>
+        <div class="row">
             <div class="left">手机号</div>
-            <!-- <div class="right">13450913425</div> -->
-            <input class="right-input" type="text" value="13450913425">
+            <input class="right-input" type="text" v-model="phone">
+        </div>
+        <div class="line"></div>
+        <div class="row" @click="selectShow(true)">
+            <div class="left">预定日期</div>
+            <p class="right-input" style='background:#fff;'>{{date}}</p>
         </div>
 
-        <button class="commit">
+        <button class="commit" @click="creatOrder()">
             提交订单
         </button>
+        <div class="selectTime" v-if="showSelect">
+            <van-datetime-picker class="time" @confirm='confirm' @cancel='cancel' v-model="date" type="date" :min-date="minDate" :max-date="maxDate"/>
+        </div>
     </div>
 </template>
 
 <script>
-import { Stepper,Field  } from "vant";
+import { Stepper, Toast, Field, DatetimePicker } from "vant";
+import axios from "../../public/axios.js";
 export default {
     data() {
         return {
-            num:1,
-            phone:'13450913425'
+            showSelect: false,
+            minDate: new Date(),
+            maxDate: new Date(),
+            num: 1,
+            name: "",
+            phone: "",
+            date: "",
+            ticketData: {}
         };
     },
     components: {
         [Stepper.name]: Stepper,
-        [Field.name]: Field,
+        [Toast.name]: Toast,
+        [DatetimePicker.name]: DatetimePicker,
+        [Field.name]: Field
     },
-    methods: {},
-    mounted() {}
+    methods: {
+        confirm(a){
+            this.selectShow(false)
+            this.date = a.getFullYear() + '-' + (a.getMonth()+1) + '-' + a.getDate()
+        },
+        cancel(){
+            this.selectShow(false)
+        },
+        selectShow(i) {
+            this.showSelect = i;
+        },
+        getTicketData() {
+            this.ticketData = JSON.parse(localStorage.getItem("ticketData"));
+            this.maxDate = new Date()
+            this.maxDate.setDate(new Date().getDate() + this.ticketData.from_now)
+        },
+        creatOrder() {
+            if(this.name === ''){
+                Toast('姓名不能为空');
+                return
+            }else if(this.phone === ''){
+                Toast('手机不能为空');
+                return
+            }else if(this.date === ''){
+                Toast('日期不能为空');
+                return
+            }
+            axios.request({
+                url:'order/orders',
+                method:'post',
+                data:{
+                    type:'ticket',
+                    ticket_id:this.ticketData.id,
+                    name:this.name,
+                    mobile:this.phone,
+                    purchase_quantity:this.num,
+                    booking_date:this.date,
+                }
+            }).then(res=>{
+                if(res.status === 1){
+                    localStorage.setItem('ticketId',res.id)
+                    this.$router.push({path:'/ticketOrderDetail'})
+                }else{
+                    Toast('下单失败，请稍后重试');
+                }
+            })
+        }
+    },
+    mounted() {
+        this.getTicketData();
+    }
 };
 </script>
 
 <style scoped>
-.page{
+.page {
+    text-align: left;
     background-color: #f1f1f1;
     position: absolute;
     width: 100%;
@@ -191,6 +256,7 @@ export default {
 }
 
 .commit {
+    text-align: center;
     margin-top: 15px;
     height: 40px;
     width: 90%;
@@ -207,5 +273,24 @@ export default {
     border: none;
     font-size: 13px;
     text-align: right;
+}
+
+.selectTime {
+    z-index: 10000;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+.time {
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+.time li{
+    text-align: center;
 }
 </style>

@@ -28,7 +28,7 @@ export default {
             isShowTabbar: true,
             tabList:['mallIndex','goodsType','cart','order'],
             //不需要添加tabbar的路由name
-            showItem: ['goods',"share", "shareManage", "goodsList","lottery","coupons","destroyCoupon","reservation","paySuccess","ticketList","ticketDetail","ticketOrder"]
+            showItem: ['goods',"share", "shareManage", "goodsList","lottery","coupons","destroyCoupon","reservation","paySuccess","ticketList","ticketDetail","ticketOrder","ticketOrderList","ticketOrderDetail","destroyTicket","manageTicketOrder"]
         };
     },
     watch: {

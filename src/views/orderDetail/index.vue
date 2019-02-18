@@ -22,12 +22,12 @@
             </p>
             <van-button v-if="orderData.pay_state === 0" class="detail-page-click-intoDefail" round type="danger" size="small"
                 @click="payOrder()">支付</van-button>
-            <van-button v-if="orderData.pay_state === 1 && use_state === 0" class="detail-page-click-qrcode" round type="primary"
-                size="small">核销二维码</van-button>
+            <van-button v-if="orderData.pay_state === 1 && orderData.use_state === 0" class="detail-page-click-intoDefail"
+                round type="warning" size="small" @click="returnOrder()">申请退款</van-button>
+            <van-button v-if="orderData.pay_state === 1 && orderData.use_state === 0" class="detail-page-click-qrcode"
+                round type="primary" size="small">核销二维码</van-button>
             <van-button v-if="orderData.pay_state === 0" class="detail-page-click-intoDefail" round type="warning" size="small"
                 @click="cancelOrder()">取消订单</van-button>
-            <van-button v-if="orderData.pay_state === 1 && use_state === 0" class="detail-page-click-intoDefail" round
-                type="warning" size="small" @click="returnOrder()">申请退款</van-button>
         </div>
         <p class="detail-page-detail-hen"></p>
         <div class="detail-page-detail">
@@ -76,7 +76,10 @@ export default {
             axios
                 .request({
                     url: "order/orders/" + this.$route.query.id,
-                    method: "get"
+                    method: "post",
+                    data:{
+                        type:'mall'
+                    }
                 })
                 .then(res => {
                     this.orderData = res.data[0];
@@ -100,6 +103,7 @@ export default {
         },
         //请求支付
         onBridgeReady() {
+            var that = this
             WeixinJSBridge.invoke(
                 "getBrandWCPayRequest",
                 this.config,
@@ -108,7 +112,7 @@ export default {
                         Toast("成功~");
                         // console.log('返回了ok提示：');
                         // console.log(res);
-                        
+                        that.getOrderData()
                         // 使用以上方式判断前端返回,微信团队郑重提示：
                         //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
                     }else{

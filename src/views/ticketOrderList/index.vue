@@ -10,10 +10,10 @@
             <div class="order-list-item" v-for='(item,index) in orderList' :key='index'>
                 <div class="order-list-item-conter">
                     <div class="order-list-item-conter-img">
-                        <img :src="item.goods[0].imgs[0].url">
+                        <img :src="item.fan_ticket[0].ticket.cover">
                     </div>
                     <div class="order-list-item-conter-text">
-                        <p class="order-list-item-conter-text-name">{{item.body}}</p>
+                        <p class="order-list-item-conter-text-name">{{item.fan_ticket[0].ticket.name}}</p>
                         <p class="order-list-item-conter-text-price">
                             <span class="order-list-item-conter-text-price-price">¥{{item.price}}</span>
                             <span class="order-list-item-conter-text-price-piece">{{orderList[index].order_goods |
@@ -23,33 +23,11 @@
                 </div>
                 <div class="order-list-item-click">
                     <van-button class="order-list-item-click-intoDefail" round type="default" size="small" @click="inOrderDetail(item.id)">订单详情</van-button>
-                    <van-button class="order-list-item-click-qrcode" round type="default" size="small">核销二维码</van-button>
+                    <!-- <van-button class="order-list-item-click-qrcode" v-if="item.pay_state === 1" round type="default" size="small">核销二维码</van-button> -->
                 </div>
             </div>
             <p v-if="orderList.length === 0" class="noData">没有更多数据</p>
         </van-list>
-        
-        <!-- <div class="order-list">
-            <div class="order-list-item" v-for='(item,index) in orderList' :key='index'>
-                <div class="order-list-item-conter">
-                    <div class="order-list-item-conter-img">
-                        <img :src="item.goods[0].imgs[0].url">
-                    </div>
-                    <div class="order-list-item-conter-text">
-                        <p class="order-list-item-conter-text-name">{{item.body}}</p>
-                        <p class="order-list-item-conter-text-price">
-                            <span class="order-list-item-conter-text-price-price">¥{{item.price}}</span>
-                            <span class="order-list-item-conter-text-price-piece">{{orderList[index].order_goods |
-                                returnNum}}</span>
-                        </p>
-                    </div>
-                </div>
-                <div class="order-list-item-click">
-                    <van-button class="order-list-item-click-intoDefail" round type="default" size="small" @click="inOrderDetail(item.id)">订单详情</van-button>
-                    <van-button class="order-list-item-click-qrcode" round type="default" size="small">核销二维码</van-button>
-                </div>
-            </div>
-        </div> -->
     </div>
 </template>
 
@@ -112,7 +90,8 @@ export default {
             this.loading = false
         },
         inOrderDetail(id) {
-            this.$router.push("/orderDetail?id=" + id);
+            localStorage.setItem('ticketId',id)
+            this.$router.push("/ticketOrderDetail");
         },
         changeIndex(index){
             this.isChangeIndex = true
@@ -132,15 +111,18 @@ export default {
                 use = 1;
             }
             if (index === 0) {
+                //全部
                 axios
                     .request({
                         url: "mall/order/type",
                         method: "post",
-                        data:{
-                            type:'mall'
+                        data: {
+                            type:'ticket'
                         }
                     })
                     .then(res => {
+                        console.log(res);
+                        
                         if(this.isChangeIndex){
                             this.orderList = [];
                         }
@@ -161,7 +143,7 @@ export default {
                         data: {
                             pay_state: pay,
                             use_state: use,
-                            type:'mall'
+                            type:'ticket'
                         }
                     })
                     .then(res => {
@@ -182,7 +164,7 @@ export default {
     },
     mounted() {
         this.orderList = [];
-        this.getOrder(0);
+        // this.getOrder(0);
     }
 };
 </script>
