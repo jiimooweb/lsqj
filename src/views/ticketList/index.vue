@@ -3,35 +3,35 @@
         <div class="store">
             <div class="name">绿水清江休闲农场</div>
             <div class="row">
-                <img src="../../assets/time.png" alt="" srcset="">
+                <img src="../../assets/time.png">
                 <span>营业时间：10:00-19:00</span>
             </div>
-            <div class="row">
-                <img src="../../assets/tel.png" alt="" srcset="">
-                <span>137 0251 2618</span>
+            <div class="row" @click="call()">
+                <img src="../../assets/tel.png">
+                <span>13702512618</span>
             </div>
-            <div class="row">
-                <img src="../../assets/address.png" alt="" srcset="">
-                <span>中山市火炬开发区中山港大道</span>
+            <div class="row" @click="addess()">
+                <img src="../../assets/address.png">
+                <span>中山火炬高技术产业开发区绿水清江休闲农业</span>
+                <!-- <span>中山市火炬开发区中山港大道绿水清江农场</span> -->
             </div>
-
+            <button class="admin" @click="intoAdmin()" v-if='isAdmin'>管理员</button>
         </div>
-        <div class="packages" @click="intoDetail()">
+        <div class="packages">
             <div class="title">套餐列表</div>
-            <div class="package">
+            <div class="package" v-for="(item,index) in ticketList" v-if='item.is_up === 1' :key='index' @click="intoDetail(item)">
                 <div class="pimg">
-                    <img src="https://download.rdoorweb.com/20190125/5307bb9e79737088f91fbc95b97a135e.jpg" alt=""
-                        srcset="">
+                    <img :src="item.cover">
                 </div>
                 <div class="info">
                     <div class="name">
-                        烧烤套餐（5-10人）
+                        {{item.name}}
                     </div>
-                    <div class="remake">适合5-10人选购</div>
-                    <div class="num">今日剩余：5</div>
-                    <div class="price">￥100</div>
+                    <div class="remake">{{item.remark}}</div>
+                    <div class="num">今日剩余：{{item.daily_inventory}}</div>
                 </div>
-                <button class="buy">购买</button>
+                <div class="price">￥{{item.price}}</div>
+                <!-- <button class="buy" @click="creatOrder(item.id)">购买</button> -->
             </div>
         </div>
         <div class="footer">所有解释权归绿水清江农场所有</div>
@@ -39,22 +39,87 @@
 </template>
 
 <script>
+import axios from "../../public/axios.js";
 export default {
     data() {
-        return {};
+        return {
+            isAdmin:false,
+            currentPage:1,
+            ticketList:[],
+            currentData:{}
+        };
     },
     components: {},
     methods: {
-        intoDetail(){
-            this.$router.push({path:'ticketDetail'})
+        addess(){
+            location.href = 'https://uri.amap.com/marker?position=113.452395,22.575444'
+        },
+        call(){
+            location.href = 'tel:13702512618'
+        },
+        intoAdmin(){
+            this.$router.push({ path: "/manageTicketOrder" });
+        },  
+        intoDetail(item) {
+            //存到本地
+            this.currentData = item
+            console.log(this.currentData);
+            
+            localStorage.setItem('ticketData',JSON.stringify(this.currentData))
+            //跳转
+            
+            this.$router.push({ path: "ticketDetail" });
+        },
+        getTicket() {
+            axios
+                .request({
+                    url: "ticket/ticket?page="+this.currentPage,
+                    method: "get"
+                })
+                .then(res => {
+                    this.ticketList = res.data.data
+                });
+        },
+        getUesr() {
+            axios
+                .request({
+                    url: "user",
+                    method: "get",
+                    headers: {
+                        token:
+                            localStorage.getItem("token") ||
+                            this.$route.query.token
+                    }
+                })
+                .then(res => {
+                    this.isAdmin = res.data.admin === null ? 0 : 1;
+                });
+        },
+        creatOrder(id){
+
         }
     },
-    mounted() {}
+    mounted() {
+        this.getTicket()
+        this.getUesr()
+    }
 };
 </script>
 
 <style scoped>
-.page{
+*{
+    text-align: left;
+}
+.admin{
+    position: absolute;
+    margin-top: -100px;
+    margin-left: 250px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #e6a23c;
+    border: 0;
+}
+.page {
     background-color: #f1f1f1;
     position: absolute;
     width: 100%;
@@ -134,7 +199,11 @@ export default {
     height: 80px;
     margin-right: 10px;
 }
-
+.packages .package .price{
+    color: #f56c6c;
+    text-align: right;
+    font-size: 16px;
+}
 .packages .package .pimg img {
     width: 100%;
     height: 100%;
@@ -157,12 +226,14 @@ export default {
 .packages .package .info .num {
     font-size: 12px;
     margin-top: 2px;
+    float: left;
     color: #909399;
 }
 
 .packages .package .info .price {
     font-size: 15px;
     font-weight: 500;
+    float: right;
     color: #f56c6c;
 }
 

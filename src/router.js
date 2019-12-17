@@ -140,9 +140,41 @@ const routes = [
                 meta: {
                     title: '套餐订单'
                 }
+            },
+            {
+                name: 'ticketOrderList',
+                path: '/ticketOrderList',
+                component: () => import('./views/ticketOrderList'),
+                meta: {
+                    title: '订单列表'
+                }
+            },
+            {
+                name: 'ticketOrderDetail',
+                path: '/ticketOrderDetail',
+                component: () => import('./views/ticketOrderDetail'),
+                meta: {
+                    title: '订单详情'
+                }
             }
         ]
     },
+    {
+        name: 'destroyTicket',
+        path: '/destroyTicket',
+        component: () => import('./views/destroyTicket'),
+        meta: {
+            title: '核销套餐'
+        }
+    },
+    {
+        name: 'manageTicketOrder',
+        path: '/manageTicketOrder',
+        component: () => import('./views/manageTicketOrder'),
+        meta: {
+            title: '管理员套餐列表'
+        }
+    }
 ];
 
 // add route path
