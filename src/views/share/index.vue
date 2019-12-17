@@ -1,54 +1,130 @@
 <template>
-    <div class="sharePage" v-if="pageShow">
-        <div class="intoAdmin" v-if="isAdmin !== 0 || shareType === 'noopen'">
-            <van-button type="primary" size='small' class="admin-btn" @click="returnAdmin()"></van-button>
+    <div
+        class="sharePage"
+        v-if="pageShow"
+    >
+        <div
+            class="intoAdmin"
+            v-if="isAdmin !== 0 || shareType === 'noopen'"
+        >
+            <van-button
+                type="primary"
+                size='small'
+                class="admin-btn"
+                @click="returnAdmin()"
+            ></van-button>
         </div>
-        <van-popup v-model="noSubscribe" class="subscribeModal" :close-on-click-overlay='false'>
+        <van-popup
+            v-model="noSubscribe"
+            class="subscribeModal"
+            :close-on-click-overlay='false'
+        >
             <p class="qrcodeText">请先关注‘绿水清江’公众号</p>
             <p class="qrcodeText">(关注后请刷新本页面)</p>
-            <img src="../../assets/qrcode.jpg" class="qrcode">
+            <img
+                src="../../assets/qrcode.jpg"
+                class="qrcode"
+            >
         </van-popup>
-        <van-popup v-model="overModal" class="subscribeModal" v-if="shareType === 'over'">
+        <van-popup
+            v-model="overModal"
+            class="subscribeModal"
+            v-if="shareType === 'over'"
+        >
             <p class="overText1">姓名：{{shareOver.name}}</p>
             <p class="overText1">联系方式：{{shareOver.contact_way}}</p>
             <p class="overText2">请出示此页面到农场免费采摘一次</p>
         </van-popup>
         <p v-if="shareType === 'noopen'">活动已结束</p>
-        <div v-if="shareType !== 'noopen'" class="page1">
+        <div
+            v-if="shareType !== 'noopen'"
+            class="page1"
+        >
             <div class="userImg">
-                <img :src="indexData.headimgurl" v-if="imgShow">
+                <img
+                    :src="indexData.headimgurl"
+                    v-if="imgShow"
+                >
             </div>
             <div class="btnPage">
-                <van-button type="warning" class="shareBtn" size="large" v-if="shareType === 'share' || userData.id == this.$route.query.id"
-                    @click="showFix(true)">分享给别人</van-button>
-                <van-button type="warning" class="shareBtn" size="large" v-if="shareType === 'beshare' && userData.id != this.$route.query.id"
-                    @click="getFollow()">为他助力</van-button>
-                <van-button type="warning" class="shareBtn" size="large" v-if="shareType === 'have'" @click="showFix(true)">已助力，我也要分享</van-button>
-                <van-button type="warning" class="shareBtn" size="large" v-if="shareType === 'record'" @click="userDataShow = true">活动任务已完成,填写资料领取</van-button>
-                <van-button type="warning" class="shareBtn" size="large" v-if="shareType === 'over' && !(this.$route.query.id != undefined && this.userData.id != this.$route.query.id)"
-                    @click="showOver(true)">资料已填写,查看详情</van-button>
-                <van-button type="warning" class="shareBtn" size="large" v-if="shareType === 'over' && (this.$route.query.id != undefined && this.userData.id != this.$route.query.id)"
-                    @click="showFix(true)">任务完成,我也要分享</van-button>
+                <van-button
+                    type="warning"
+                    class="shareBtn"
+                    size="large"
+                    v-if="shareType === 'share' || userData.id == this.$route.query.id"
+                    @click="showFix(true)"
+                >分享给别人</van-button>
+                <van-button
+                    type="warning"
+                    class="shareBtn"
+                    size="large"
+                    v-if="shareType === 'beshare' && userData.id != this.$route.query.id"
+                    @click="getFollow()"
+                >为他助力</van-button>
+                <van-button
+                    type="warning"
+                    class="shareBtn"
+                    size="large"
+                    v-if="shareType === 'have'"
+                    @click="showFix(true)"
+                >已助力，我也要分享</van-button>
+                <van-button
+                    type="warning"
+                    class="shareBtn"
+                    size="large"
+                    v-if="shareType === 'record'"
+                    @click="userDataShow = true"
+                >活动任务已完成,填写资料领取</van-button>
+                <van-button
+                    type="warning"
+                    class="shareBtn"
+                    size="large"
+                    v-if="shareType === 'over' && !(this.$route.query.id != undefined && this.userData.id != this.$route.query.id)"
+                    @click="showOver(true)"
+                >资料已填写,查看详情</van-button>
+                <van-button
+                    type="warning"
+                    class="shareBtn"
+                    size="large"
+                    v-if="shareType === 'over' && (this.$route.query.id != undefined && this.userData.id != this.$route.query.id)"
+                    @click="showFix(true)"
+                >任务完成,我也要分享</van-button>
             </div>
             <div class="map">
                 <a href="https://uri.amap.com/marker?position=113.452395,22.575444">
                     <van-icon name="location" />绿水清江农场</a>
             </div>
         </div>
-        <div v-if="shareType !== 'noopen'" class="page2">
+        <div
+            v-if="shareType !== 'noopen'"
+            class="page2"
+        >
             <div class="shareMember">
                 <p class="memberText">助力好友</p>
                 <div class="helpList">
-                    <div class="helpList-item" v-for="(item,index) in helpList" :key="index">
-                        <img :src="item.headimgurl" class="helpList-item-img">
+                    <div
+                        class="helpList-item"
+                        v-for="(item,index) in helpList"
+                        :key="index"
+                    >
+                        <img
+                            :src="item.headimgurl"
+                            class="helpList-item-img"
+                        >
                         <p class="helpList-item-name">{{item.nickname}}</p>
                     </div>
-                    <p class="helpList-p" v-if="helpListLength === 0">暂无好友助力</p>
+                    <p
+                        class="helpList-p"
+                        v-if="helpListLength === 0"
+                    >暂无好友助力</p>
                 </div>
             </div>
         </div>
 
-        <div v-if="shareType !== 'noopen'" class="page3">
+        <div
+            v-if="shareType !== 'noopen'"
+            class="page3"
+        >
             <div class="shareText">
                 <p>活动细则</p>
                 <p>1、每个人只能为每位好友各助力一次</p>
@@ -60,12 +136,28 @@
             </div>
             <p class="shareTip">本活动最终解释权归绿水清江所有</p>
         </div>
-        <div class="shareFix" v-if="fixDisplay" @click="showFix(false)">
+        <div
+            class="shareFix"
+            v-if="fixDisplay"
+            @click="showFix(false)"
+        >
             <p>点击右上角 ... 发送给朋友</p>
         </div>
-        <van-dialog v-model="userDataShow" show-cancel-button @confirm="inputData()">
-            <van-field v-model="userCurrentData.name" label="姓名" placeholder="请输入姓名" />
-            <van-field v-model="userCurrentData.phone" label="联系方式" placeholder="请输入联系方式" />
+        <van-dialog
+            v-model="userDataShow"
+            show-cancel-button
+            @confirm="inputData()"
+        >
+            <van-field
+                v-model="userCurrentData.name"
+                label="姓名"
+                placeholder="请输入姓名"
+            />
+            <van-field
+                v-model="userCurrentData.phone"
+                label="联系方式"
+                placeholder="请输入联系方式"
+            />
         </van-dialog>
     </div>
 </template>
@@ -77,7 +169,7 @@ Vue.use(Dialog);
 import axios from "../../public/axios.js";
 import Token from "../../public/util.js";
 const token = new Token();
-
+import baseURL from "../../../config/url";
 import wxApi from "../../public/wx.js";
 const wxa = new wxApi();
 export default {
@@ -285,7 +377,7 @@ export default {
             let config = {
                 title: this.configData.name, // 分享标题
                 desc: this.configData.introduce, // 分享描述
-                link: "https://zhlsqj.com/#/share?id=" + this.userData.id, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                link: baseURL + "#/share?id=" + this.userData.id, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
                 imgUrl: this.configData.img, // 分享图标
                 success: function() {
                     // 分享成功

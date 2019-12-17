@@ -1,7 +1,13 @@
 <template>
     <div class="indexPage">
-        <div class="loading" v-if="loading">
-            <van-loading class="loading-in" size='30px'/>
+        <div
+            class="loading"
+            v-if="loading"
+        >
+            <van-loading
+                class="loading-in"
+                size='30px'
+            />
         </div>
         <div class="swipePage">
             <van-swipe
@@ -25,9 +31,16 @@
                 <img src="../../assets/active.png">
                 <p>优惠商品</p>
             </div>
+            <div class="nav-item">
+                <img src="../../assets/active.png">
+                <p>门票购买</p>
+            </div>
         </div>
         <div class="type">
-            <div class="type1">
+            <div
+                class="type1"
+                v-if="general.length > 0"
+            >
                 <van-cell
                     title="热卖商品"
                     is-link
@@ -35,7 +48,12 @@
                     to='/goodsList?id=generals'
                 />
                 <div class="type1List">
-                    <div class="type1List-item" v-for="(item,index) in general" :key='index' @click="returnDetail(item.id)">
+                    <div
+                        class="type1List-item"
+                        v-for="(item,index) in general"
+                        :key='index'
+                        @click="returnDetail(item.id)"
+                    >
                         <div class="type1List-item-img">
                             <img :src="item.imgs[0].url">
                         </div>
@@ -48,7 +66,10 @@
                     </div>
                 </div>
             </div>
-            <div class="type2" v-if="discount.length > 0">
+            <div
+                class="type2"
+                v-if="discount.length > 0"
+            >
                 <van-cell
                     title="优惠推荐"
                     is-link
@@ -56,7 +77,12 @@
                     to='/goodsList?id=discounts'
                 />
                 <div class="type1List">
-                    <div class="type1List-item" v-for="(item,index) in discount" :key='index' @click="returnDetail(item.id)">
+                    <div
+                        class="type1List-item"
+                        v-for="(item,index) in discount"
+                        :key='index'
+                        @click="returnDetail(item.id)"
+                    >
                         <div class="type1List-item-img">
                             <img :src="item.imgs[0].url">
                         </div>
@@ -65,18 +91,21 @@
                         </p>
                         <p class="type1List-item-price">
                             <span class="type1List-item-price-new">
-                                ¥{{item.discount}}<br/>
+                                ¥{{item.discount}}<br />
                                 <span class="type1List-item-price-new-dec">优惠价</span>
                             </span>
                             <span class="type1List-item-price-old">
-                                ¥{{item.price}}<br/>
+                                ¥{{item.price}}<br />
                                 <span class="type1List-item-price-old-dec">原价</span>
                             </span>
                         </p>
                     </div>
                 </div>
             </div>
-            <div class="type1" v-if="member.length > 0">
+            <div
+                class="type1"
+                v-if="member.length > 0"
+            >
                 <van-cell
                     title="会员专享"
                     is-link
@@ -84,7 +113,12 @@
                     to='/goodsList?id=members'
                 />
                 <div class="type1List">
-                    <div class="type1List-item" v-for="(item,index) in member" :key='index' @click="returnDetail(item.id)">
+                    <div
+                        class="type1List-item"
+                        v-for="(item,index) in member"
+                        :key='index'
+                        @click="returnDetail(item.id)"
+                    >
                         <div class="type1List-item-img">
                             <img :src="item.imgs[0].url">
                         </div>
@@ -97,7 +131,10 @@
                     </div>
                 </div>
             </div>
-            <div class="type2" v-if="group.length > 0">
+            <div
+                class="type2"
+                v-if="group.length > 0"
+            >
                 <van-cell
                     title="团购商品"
                     is-link
@@ -105,7 +142,12 @@
                     to='/goodsList?id=groups'
                 />
                 <div class="type1List">
-                    <div class="type1List-item" v-for="(item,index) in group" :key='index' @click="returnDetail(item.id)">
+                    <div
+                        class="type1List-item"
+                        v-for="(item,index) in group"
+                        :key='index'
+                        @click="returnDetail(item.id)"
+                    >
                         <div class="type1List-item-img">
                             <img :src="item.imgs[0].url">
                         </div>
@@ -114,11 +156,11 @@
                         </p>
                         <p class="type1List-item-price">
                             <span class="type1List-item-price-new">
-                                ¥{{item.discount}}<br/>
+                                ¥{{item.discount}}<br />
                                 <span class="type1List-item-price-new-dec">优惠价</span>
                             </span>
                             <span class="type1List-item-price-old">
-                                ¥{{item.price}}<br/>
+                                ¥{{item.price}}<br />
                                 <span class="type1List-item-price-old-dec">原价</span>
                             </span>
                         </p>
@@ -139,17 +181,17 @@ export default {
         [Cell.name]: Cell,
         [CellGroup.name]: CellGroup,
         [Loading.name]: Loading,
-        [Icon.name]: Icon,
+        [Icon.name]: Icon
     },
     data() {
         return {
-            loading:true,
+            loading: true,
             swipeList: [],
-            type1List:[],
-            discount:[],
-            general:[],
-            group:[],
-            member:[]
+            type1List: [],
+            discount: [],
+            general: [],
+            group: [],
+            member: []
         };
     },
     methods: {
@@ -177,33 +219,34 @@ export default {
                         });
                 });
         },
-        getGoods(){ 
-            axios.request({
-                url:'mall/hots',
-                // url:'mall/generals',
-                method:'get'
-            }).then(res=>{
-                this.discount = res.discount
-                this.general = res.general
-                this.group = res.group
-                this.member = res.member
-                this.loading = false
-            })
+        getGoods() {
+            axios
+                .request({
+                    url: "mall/hots",
+                    // url:'mall/generals',
+                    method: "get"
+                })
+                .then(res => {
+                    this.discount = res.discount;
+                    this.general = res.general;
+                    this.group = res.group;
+                    this.member = res.member;
+                    this.loading = false;
+                });
         },
-        returnDetail(id){
+        returnDetail(id) {
             // console.log(id);
-            this.$router.push({path:'goods?id='+id})
-        },
+            this.$router.push({ path: "goods?id=" + id });
+        }
     },
     mounted() {
         this.getAllSwipe();
-        this.getGoods()
+        this.getGoods();
     }
 };
 </script>
 
 <style lang='less'>
-
 .indexPage {
     background: #eee;
     position: absolute;
@@ -211,39 +254,39 @@ export default {
     height: calc(100% - 50px);
     overflow-x: hidden;
     overflow-y: scroll;
-    .loading{
+    .loading {
         width: 100%;
         height: calc(100% - 50px);
         position: fixed;
         z-index: 10000000;
         background: #eee;
-        &-in{
+        &-in {
             margin: 50% auto 0;
         }
     }
-    .swipePage{
+    .swipePage {
         background: #fff;
     }
-    .nav{
+    .nav {
         width: 100%;
         overflow: hidden;
         background: #fff;
         padding-bottom: 10px;
-        &-item{
+        &-item {
             width: calc(100% / 2);
             height: 50px;
             // background: #666;
             float: left;
-            img{
+            img {
                 width: 30px;
                 height: 30px;
                 display: block;
                 margin: 0 auto;
             }
-            p{
+            p {
                 font-size: 14px;
                 line-height: 20px;
-                margin:0;
+                margin: 0;
             }
         }
     }
@@ -265,24 +308,24 @@ export default {
                 }
             }
         }
-        .type1List{
+        .type1List {
             width: 95%;
             margin: 10px auto 0;
             overflow: hidden;
-            &-item:nth-child(2n){
+            &-item:nth-child(2n) {
                 margin-left: 2%;
             }
-            &-item{
+            &-item {
                 width: 49%;
                 float: left;
                 margin-bottom: 20px;
                 overflow: hidden;
-                &-img{
+                &-img {
                     position: relative;
                     width: 100%;
                     height: 0px;
                     padding-bottom: 100%;
-                    img{
+                    img {
                         position: absolute;
                         width: 100%;
                         height: 100%;
@@ -290,16 +333,16 @@ export default {
                         border-radius: 5px;
                     }
                 }
-                &-text{
+                &-text {
                     font-size: 16px;
                     line-height: 35px;
                     text-align: left;
                     margin: 0;
                     overflow: hidden;
-                    text-overflow:ellipsis;
+                    text-overflow: ellipsis;
                     white-space: nowrap;
                 }
-                &-price{
+                &-price {
                     font-size: 14px;
                     color: red;
                     text-align: left;
@@ -323,28 +366,28 @@ export default {
                 }
             }
         }
-        .type1List{
+        .type1List {
             width: 95%;
             margin: 10px auto 0;
             overflow: hidden;
-            &-item{
+            &-item {
                 width: 100%;
                 float: left;
                 margin-bottom: 20px;
                 overflow: hidden;
                 padding-bottom: 10px;
-                border-bottom:1px solid #eee;
-                &-img{
+                border-bottom: 1px solid #eee;
+                &-img {
                     float: left;
                     width: 100px;
                     height: 100px;
-                    img{
+                    img {
                         width: 100%;
                         height: 100%;
                         border-radius: 5px;
                     }
                 }
-                &-text{
+                &-text {
                     float: right;
                     width: calc(100% - 100px - 10px);
                     font-size: 16px;
@@ -352,28 +395,28 @@ export default {
                     text-align: left;
                     margin: 0;
                     overflow: hidden;
-                    text-overflow:ellipsis;
+                    text-overflow: ellipsis;
                     white-space: nowrap;
                 }
-                &-price{
+                &-price {
                     float: right;
                     width: calc(100% - 100px - 10px);
                     color: red;
                     text-align: left;
                     font-size: 14px;
                     margin: 30px 0 0;
-                    &-new{
+                    &-new {
                         float: left;
-                        margin-right: 30px; 
-                        &-dec{
+                        margin-right: 30px;
+                        &-dec {
                             color: #666;
                         }
                     }
-                    &-old{
+                    &-old {
                         float: left;
                         margin-left: 50px;
                         color: #aaa;
-                        &-dec{
+                        &-dec {
                             color: #aaa;
                         }
                     }

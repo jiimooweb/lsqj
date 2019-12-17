@@ -1,25 +1,63 @@
 <template>
     <div>
-        <van-popup v-model="noSubscribe" class="subscribeModal" :close-on-click-overlay='false'>
+        <van-popup
+            v-model="noSubscribe"
+            class="subscribeModal"
+            :close-on-click-overlay='false'
+        >
             <p class="qrcodeText">请先关注‘绿水清江’公众号</p>
             <p class="qrcodeText">(关注后请刷新本页面)</p>
-            <img src="../../assets/qrcode.jpg" class="qrcode">
+            <img
+                src="../../assets/qrcode.jpg"
+                class="qrcode"
+            >
         </van-popup>
-        <van-popup v-model="activeNull" class="subscribeModal" style="padding-bottom:0;" :close-on-click-overlay='false'>
+        <van-popup
+            v-model="activeNull"
+            class="subscribeModal"
+            style="padding-bottom:0;"
+            :close-on-click-overlay='false'
+        >
             <p style="font-size:16px;padding:20px 0;">活动已结束，敬请期待下次抽奖活动！</p>
         </van-popup>
-        <div class="turnPage" v-if="hasData">
+        <div
+            class="turnPage"
+            v-if="hasData"
+        >
             <div class="btnPage">
-                <p class='rule' @click="showRule">抽奖规则</p>
-                <p class="prize" @click="showPrize">奖品池</p>
+                <p
+                    class='rule'
+                    @click="showRule"
+                >抽奖规则</p>
+                <p
+                    class="prize"
+                    @click="showPrize"
+                >奖品池</p>
             </div>
-            <img class="turnPic" :src="turn_img">
-            <img :class="'pointPic ' + (rotateClass?'rotate':'')" :style="'transform: rotate('+this.deg+'deg)'" :src="pointer_img"
-                @click="getResult()">
-            <p class="clickTip" v-show='!isTurn' @click="getResult()">GO!</p>
-            <p class="number" v-if="lotteryData !== ''">所剩次数：{{lotteryData.fan_data.number}}</p>
+            <img
+                class="turnPic"
+                :src="turn_img"
+            >
+            <img
+                :class="'pointPic ' + (rotateClass?'rotate':'')"
+                :style="'transform: rotate('+this.deg+'deg)'"
+                :src="pointer_img"
+                @click="getResult()"
+            >
+            <p
+                class="clickTip"
+                v-show='!isTurn'
+                @click="getResult()"
+            >GO!</p>
+            <p
+                class="number"
+                v-if="lotteryData !== ''"
+            >所剩次数：{{lotteryData.fan_data.number}}</p>
         </div>
-        <van-dialog v-model="ruleDialog" class="rulePage">
+        <van-dialog
+            v-model="ruleDialog"
+            class="rulePage"
+        >
             <p class="title">抽奖规则</p>
             <div class="ruleText">
                 <p>1.每人有一次抽奖机会,以后或有其他活动能兑换抽奖次数,敬请留意参与。</p>
@@ -27,56 +65,74 @@
                 <p>3.绿水清江拥有活动最终解释权</p>
             </div>
         </van-dialog>
-        <van-dialog v-model="prizeDialog" class="rulePage">
+        <van-dialog
+            v-model="prizeDialog"
+            class="rulePage"
+        >
             <van-tabs color='#0079f3'>
-                <van-tab title="奖品池" style="height:200px;overflow-y:scroll;">
+                <van-tab
+                    title="奖品池"
+                    style="height:200px;overflow-y:scroll;"
+                >
                     <div class="ruleText">
-                        <p v-for="(item,index) in lotteryData.prizes" v-if="item.coupon_id !== 0" :key='index'>{{item.orderby_name}}：{{item.coupon.name}}</p>
+                        <p
+                            v-for="(item,index) in lotteryData.prizes"
+                            :key='index'
+                        ><span v-if="item.coupon_id !== 0">{{item.orderby_name}}：{{item.coupon.name}}</span></p>
                     </div>
                 </van-tab>
-                <van-tab title="我的奖品" style="height:200px;overflow-y:scroll;">
+                <van-tab
+                    title="我的奖品"
+                    style="height:200px;overflow-y:scroll;"
+                >
                     <div class="ruleText">
-                        <p v-for="(item,index) in historyList" v-if="item.coupon_id !== 0" :key='index'>{{item.coupon_name}}</p>
+                        <p
+                            v-for="(item,index) in historyList"
+                            :key='index'
+                        >
+                            <span v-if="item.coupon_id !==0">{{item.coupon_name}}</span>
+                        </p>
                     </div>
                 </van-tab>
             </van-tabs>
-            
+
         </van-dialog>
     </div>
 </template>
 
 <script>
-import { Dialog, Tab, Tabs,Popup  } from "vant";
+import { Dialog, Tab, Tabs, Popup } from "vant";
 import Vue from "vue";
 Vue.use(Dialog);
 Vue.use(Tab).use(Tabs);
 import axios from "../../public/axios.js";
 import Token from "../../public/util.js";
+import baseURL from "../../../config/url";
 const token = new Token();
 import wxApi from "../../public/wx.js";
 const wxa = new wxApi();
 export default {
     components: {
         // [Dialog.name]: Dialog
-        [Popup.name]: Popup,
+        [Popup.name]: Popup
     },
     data() {
         return {
-            activeNull:false,
-            noSubscribe:false,
-            hasData:false,
+            activeNull: false,
+            noSubscribe: false,
+            hasData: false,
             turn_img: "",
             pointer_img: "",
-            lotteryData: '',
+            lotteryData: "",
             rotateClass: false,
             deg: 0,
             isTurn: false,
             hasNum: false,
             number: 0,
-            ruleDialog:false,
-            prizeDialog:false,
-            userData:{},
-            historyList:[]
+            ruleDialog: false,
+            prizeDialog: false,
+            userData: {},
+            historyList: []
         };
     },
     watch: {
@@ -86,14 +142,16 @@ export default {
     },
     methods: {
         //获取奖品历史
-        getHistory(){
-            axios.request({
-                url:'lottery/fan/history',
-                method:'get'
-            }).then(res=>{
-                this.historyList = res.data
-            })
-        },  
+        getHistory() {
+            axios
+                .request({
+                    url: "lottery/fan/history",
+                    method: "get"
+                })
+                .then(res => {
+                    this.historyList = res.data;
+                });
+        },
         //获取用户资料
         getUesr() {
             axios
@@ -118,15 +176,15 @@ export default {
                     this.pageShow = true;
                     this.imgShow = true;
                     this.fx(location.href);
-                })
+                });
         },
         fx(path) {
             // alert('开始设置config')
-            
+
             let config = {
                 title: this.lotteryData.activity.name, // 分享标题
                 desc: this.lotteryData.activity.introduce, // 分享描述
-                link: "https://zhlsqj.com/#/lottery", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                link: baseURL + "#/lottery", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
                 imgUrl: this.lotteryData.activity.img, // 分享图标
                 success: function() {
                     // 分享成功
@@ -137,11 +195,11 @@ export default {
         },
         //显示规则
         showRule() {
-            this.ruleDialog = true
+            this.ruleDialog = true;
         },
         //显示奖品
         showPrize() {
-            this.prizeDialog = true
+            this.prizeDialog = true;
         },
         getLotteryData() {
             axios
@@ -150,18 +208,18 @@ export default {
                     method: "get"
                 })
                 .then(res => {
-                    if(res.data == '活动未开'){
-                        this.activeNull = true
-                        return
+                    if (res.data == "活动未开") {
+                        this.activeNull = true;
+                        return;
                     }
                     this.lotteryData = res.data;
-                    
+
                     this.turn_img = this.lotteryData.activity.turn_img;
                     this.pointer_img = this.lotteryData.activity.pointer_img;
-                    this.number = this.lotteryData.fan_data.number
-                    this.hasData = true
-                    this.getHistory()
-                    this.getUesr()
+                    this.number = this.lotteryData.fan_data.number;
+                    this.hasData = true;
+                    this.getHistory();
+                    this.getUesr();
                 });
         },
         getResult() {
@@ -178,11 +236,11 @@ export default {
             }
             this.isTurn = true;
             this.rotateClass = false;
-            if(this.deg !== 0){
+            if (this.deg !== 0) {
                 this.deg = this.deg - 360 * 30;
             }
             console.log(this.deg);
-            
+
             axios
                 .request({
                     url: "lottery/result",
@@ -197,13 +255,17 @@ export default {
                     setTimeout(() => {
                         Dialog.alert({
                             // message: res.data.result_prize.coupon_id === 0?"很遗憾没有中奖":"恭喜你获得 ’" +res.data.result_prize.coupon + "‘"
-                            message: res.data.result_prize.coupon_id === 0?"很遗憾没有中奖":"恭喜你获得 ’" +res.data.result_prize.coupon.name + "‘"
+                            message:
+                                res.data.result_prize.coupon_id === 0
+                                    ? "很遗憾没有中奖"
+                                    : "恭喜你获得 ’" +
+                                      res.data.result_prize.coupon.name +
+                                      "‘"
                         }).then(() => {
                             // on close
                         });
                         this.isTurn = false;
                         console.log(this.isTurn);
-                        
                     }, 4000);
                     this.getLotteryData();
                 });
@@ -233,13 +295,13 @@ export default {
     width: 80%;
     height: auto;
 }
-.rulePage{
-    .title{
+.rulePage {
+    .title {
         font-size: 15px;
     }
-    .ruleText{
+    .ruleText {
         padding: 10px 0 20px;
-        p{
+        p {
             font-size: 14px;
             text-align: center;
             padding: 0 20px;
@@ -285,12 +347,12 @@ export default {
         display: block;
         margin: -60% auto 0;
     }
-    .clickTip{
+    .clickTip {
         margin-top: -22%;
         position: absolute;
         width: 100%;
         font-size: 20px;
-        color:#000;
+        color: #000;
         font-weight: bold;
     }
     .number {
