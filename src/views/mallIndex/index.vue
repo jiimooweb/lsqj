@@ -272,11 +272,12 @@ export default {
         overflow: hidden;
         background: #fff;
         padding-bottom: 10px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
         &-item {
-            width: calc(100% / 2);
+            width: 20%;
             height: 50px;
-            // background: #666;
-            float: left;
             img {
                 width: 30px;
                 height: 30px;

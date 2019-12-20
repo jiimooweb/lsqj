@@ -3,11 +3,29 @@
         <!-- <p class="order-title">
             <span>我的订单</span>
         </p> -->
-        <van-tabs v-model="orderType" class="order-tab" @change="changeIndex">
-            <van-tab :title="item.label" v-for="(item,index) in orderText" :key='index'></van-tab>
+        <van-tabs
+            v-model="orderType"
+            class="order-tab"
+            @change="changeIndex"
+        >
+            <van-tab
+                :title="item.label"
+                v-for="(item,index) in orderText"
+                :key='index'
+            ></van-tab>
         </van-tabs>
-        <van-list v-model="loading" :finished="finished" finished-text="没有更多数据" @load="onLoad" class="order-list">
-            <div class="order-list-item" v-for='(item,index) in orderList' :key='index'>
+        <van-list
+            v-model="loading"
+            :finished="finished"
+            finished-text="没有更多数据"
+            @load="onLoad"
+            class="order-list"
+        >
+            <div
+                class="order-list-item"
+                v-for='(item,index) in orderList'
+                :key='index'
+            >
                 <div class="order-list-item-conter">
                     <div class="order-list-item-conter-img">
                         <img :src="item.goods[0].imgs[0].url">
@@ -22,13 +40,32 @@
                     </div>
                 </div>
                 <div class="order-list-item-click">
-                    <van-button class="order-list-item-click-intoDefail" round type="default" size="small" @click="inOrderDetail(item.id)">订单详情</van-button>
-                    <van-button class="order-list-item-click-qrcode" round type="default" size="small">核销二维码</van-button>
+                    <span
+                        v-if="item.is_valid === 0"
+                        style="color:red;font-size:12px;float:left;margin-left:10px;line-height:20px;"
+                    >该订单已失效</span>
+                    <van-button
+                        class="order-list-item-click-intoDefail"
+                        round
+                        type="default"
+                        size="small"
+                        @click="inOrderDetail(item.id)"
+                    >订单详情</van-button>
+                    <van-button
+                        v-if="item.is_valid === 1"
+                        class="order-list-item-click-qrcode"
+                        round
+                        type="default"
+                        size="small"
+                    >核销二维码</van-button>
                 </div>
             </div>
-            <p v-if="orderList.length === 0" class="noData">没有更多数据</p>
+            <p
+                v-if="orderList.length === 0"
+                class="noData"
+            >没有更多数据</p>
         </van-list>
-        
+
         <!-- <div class="order-list">
             <div class="order-list-item" v-for='(item,index) in orderList' :key='index'>
                 <div class="order-list-item-conter">
@@ -66,10 +103,11 @@ export default {
     },
     data() {
         return {
-            isLast:false,
-            currentIndex:0,
-            loading:false,
-            finished:false,
+            isLast: false,
+            page: 0,
+            currentIndex: 0,
+            loading: false,
+            finished: false,
             orderType: 0,
             orderText: [
                 {
@@ -104,23 +142,25 @@ export default {
         }
     },
     methods: {
-        onLoad(){
-            if(!this.isLast){
-                this.getOrder(this.currentIndex)
+        onLoad() {
+            if (!this.isLast) {
+                this.getOrder(this.currentIndex);
             }
-            this.finished = this.isLast
-            this.loading = false
+            this.finished = this.isLast;
+            this.loading = false;
         },
         inOrderDetail(id) {
             this.$router.push("/orderDetail?id=" + id);
         },
-        changeIndex(index){
-            this.isChangeIndex = true
-            this.getOrder(index)
+        changeIndex(index) {
+            this.isChangeIndex = true;
+            this.page = 0;
+            this.getOrder(index);
         },
         getOrder(index) {
-            this.currentIndex = index
+            this.currentIndex = index;
             let pay, use, url;
+            this.page++;
             if (index === 1) {
                 pay = 0;
                 use = 0;
@@ -136,22 +176,23 @@ export default {
                     .request({
                         url: "mall/order/type",
                         method: "post",
-                        data:{
-                            type:'mall'
+                        data: {
+                            page: this.page,
+                            type: "mall"
                         }
                     })
                     .then(res => {
-                        if(this.isChangeIndex){
+                        if (this.isChangeIndex) {
                             this.orderList = [];
                         }
                         for (let i = 0; i < res.data.data.length; i++) {
                             this.orderList.push(res.data.data[i]);
                         }
-                        if(res.data.current_page === res.data.last_page){
-                            this.isLast = true
-                            this.loading = false
+                        if (res.data.current_page === res.data.last_page) {
+                            this.isLast = true;
+                            this.loading = false;
                         }
-                        this.isChangeIndex = false
+                        this.isChangeIndex = false;
                     });
             } else {
                 axios
@@ -161,21 +202,22 @@ export default {
                         data: {
                             pay_state: pay,
                             use_state: use,
-                            type:'mall'
+                            type: "mall",
+                            page: this.page
                         }
                     })
                     .then(res => {
-                        if(this.isChangeIndex){
+                        if (this.isChangeIndex) {
                             this.orderList = [];
                         }
                         for (let i = 0; i < res.data.data.length; i++) {
                             this.orderList.push(res.data.data[i]);
                         }
-                        if(res.data.current_page === res.data.last_page){
-                            this.isLast = true
-                            this.loading = false
+                        if (res.data.current_page === res.data.last_page) {
+                            this.isLast = true;
+                            this.loading = false;
                         }
-                        this.isChangeIndex = false
+                        this.isChangeIndex = false;
                     });
             }
         }
@@ -289,7 +331,7 @@ export default {
         }
     }
 }
-.noData{
+.noData {
     font-size: 16px;
 }
 </style>

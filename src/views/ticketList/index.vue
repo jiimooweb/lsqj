@@ -6,20 +6,39 @@
                 <img src="../../assets/time.png">
                 <span>营业时间：10:00-19:00</span>
             </div>
-            <div class="row" @click="call()">
+            <div
+                class="row"
+                @click="call()"
+            >
                 <img src="../../assets/tel.png">
                 <span>13702512618</span>
             </div>
-            <div class="row" @click="addess()">
+            <div
+                class="row"
+                @click="addess()"
+            >
                 <img src="../../assets/address.png">
                 <span>中山火炬高技术产业开发区绿水清江休闲农业</span>
                 <!-- <span>中山市火炬开发区中山港大道绿水清江农场</span> -->
             </div>
-            <button class="admin" @click="intoAdmin()" v-if='isAdmin'>管理员</button>
+            <button
+                class="admin"
+                @click="intoAdmin()"
+                v-if='isAdmin'
+            >管理员</button>
         </div>
-        <div class="packages">
+        <div
+            class="packages"
+            v-if="ticketList.length>0"
+        >
             <div class="title">套餐列表</div>
-            <div class="package" v-for="(item,index) in ticketList" v-if='item.is_up === 1' :key='index' @click="intoDetail(item)">
+            <div
+                class="package"
+                v-for="(item,index) in ticketList"
+                :key='index'
+                @click="intoDetail(item)"
+            >
+                <!-- <div v-if='item.is_up === 1'> -->
                 <div class="pimg">
                     <img :src="item.cover">
                 </div>
@@ -32,6 +51,7 @@
                 </div>
                 <div class="price">￥{{item.price}}</div>
                 <!-- <button class="buy" @click="creatOrder(item.id)">购买</button> -->
+                <!-- </div> -->
             </div>
         </div>
         <div class="footer">所有解释权归绿水清江农场所有</div>
@@ -43,41 +63,45 @@ import axios from "../../public/axios.js";
 export default {
     data() {
         return {
-            isAdmin:false,
-            currentPage:1,
-            ticketList:[],
-            currentData:{}
+            isAdmin: false,
+            currentPage: 1,
+            ticketList: [],
+            currentData: {}
         };
     },
     components: {},
     methods: {
-        addess(){
-            location.href = 'https://uri.amap.com/marker?position=113.452395,22.575444'
+        addess() {
+            location.href =
+                "https://uri.amap.com/marker?position=113.452395,22.575444";
         },
-        call(){
-            location.href = 'tel:13702512618'
+        call() {
+            location.href = "tel:13702512618";
         },
-        intoAdmin(){
+        intoAdmin() {
             this.$router.push({ path: "/manageTicketOrder" });
-        },  
+        },
         intoDetail(item) {
             //存到本地
-            this.currentData = item
+            this.currentData = item;
             console.log(this.currentData);
-            
-            localStorage.setItem('ticketData',JSON.stringify(this.currentData))
+
+            localStorage.setItem(
+                "ticketData",
+                JSON.stringify(this.currentData)
+            );
             //跳转
-            
+
             this.$router.push({ path: "ticketDetail" });
         },
         getTicket() {
             axios
                 .request({
-                    url: "ticket/ticket?page="+this.currentPage,
+                    url: "ticket/ticket?page=" + this.currentPage,
                     method: "get"
                 })
                 .then(res => {
-                    this.ticketList = res.data.data
+                    this.ticketList = res.data.data;
                 });
         },
         getUesr() {
@@ -95,22 +119,20 @@ export default {
                     this.isAdmin = res.data.admin === null ? 0 : 1;
                 });
         },
-        creatOrder(id){
-
-        }
+        creatOrder(id) {}
     },
     mounted() {
-        this.getTicket()
-        this.getUesr()
+        this.getTicket();
+        this.getUesr();
     }
 };
 </script>
 
 <style scoped>
-*{
+* {
     text-align: left;
 }
-.admin{
+.admin {
     position: absolute;
     margin-top: -100px;
     margin-left: 250px;
@@ -199,7 +221,7 @@ export default {
     height: 80px;
     margin-right: 10px;
 }
-.packages .package .price{
+.packages .package .price {
     color: #f56c6c;
     text-align: right;
     font-size: 16px;
