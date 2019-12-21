@@ -31,7 +31,7 @@
                 <img src="../../assets/active.png">
                 <p>优惠商品</p>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" @click="$router.push({path:'/ticketList'})">
                 <img src="../../assets/active.png">
                 <p>门票购买</p>
             </div>

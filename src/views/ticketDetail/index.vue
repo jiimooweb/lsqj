@@ -1,7 +1,14 @@
 <template>
     <div class="page">
-        <div class="title">{{ticketData.name}}</div>
-        <div class="content" v-html="ticketData.content">
+        <div class="title">
+            <img :src="ticketData.cover">
+            <span>{{ticketData.name}}</span>
+        </div>
+        <p class="contentTitle">详情</p>
+        <div
+            class="content"
+            v-html="ticketData.content"
+        >
             <!--放富文本内容 -->
         </div>
         <div class="footer">
@@ -9,7 +16,10 @@
                 <div class="price">￥{{ticketData.price}}</div>
                 <div class="num">今日剩余：{{ticketData.daily_inventory}}</div>
             </div>
-            <button class="buy" @click="creatOrder()">立即购买</button>
+            <button
+                class="buy"
+                @click="creatOrder()"
+            >立即购买</button>
         </div>
     </div>
 </template>
@@ -19,41 +29,42 @@ import axios from "../../public/axios.js";
 export default {
     data() {
         return {
-            ticketData:{}
+            ticketData: {}
         };
     },
     components: {},
     methods: {
-        getTicket(){
-            this.ticketData = JSON.parse(localStorage.getItem('ticketData'))
+        getTicket() {
+            this.ticketData = JSON.parse(localStorage.getItem("ticketData"));
             axios
                 .request({
-                    url: "ticket/ticket/"+this.ticketData.id,
+                    url: "ticket/ticket/" + this.ticketData.id,
                     method: "get"
                 })
                 .then(res => {
-                    this.ticketData = res.data
+                    this.ticketData = res.data;
                 });
         },
-        creatOrder(){
-            if(this.ticketData.daily_inventory === 0){
+        creatOrder() {
+            if (this.ticketData.daily_inventory === 0) {
                 // Toast('今日名额');
-                return
+                return;
             }
             this.$router.push({ path: "ticketOrder" });
         }
     },
     mounted() {
-        this.getTicket()
+        this.getTicket();
     }
 };
 </script>
 
 <style scoped>
-*{
+* {
     text-align: left;
 }
-.page{
+.page {
+    background: #efefef;
     position: absolute;
     width: 100%;
     height: calc(100% - 50px);
@@ -63,13 +74,35 @@ export default {
     overflow-y: scroll;
 }
 .title {
-    font-size: 20px;
-    font-weight: 500;
+    background: #fff;
+    overflow: hidden;
     padding: 10px;
-    box-sizing: border-box;
 }
-
+.title img {
+    float: left;
+    width: 100px;
+    height: 100px;
+    margin-right: 10px;
+}
+.title span {
+    float: left;
+    font-size: 16px;
+    color: #666;
+    line-height: 25px;
+}
+.contentTitle {
+    font-size: 14px;
+    line-height: 35px;
+    border-bottom: 1px solid #efefef;
+    color: #999;
+    margin-bottom: 0;
+    background: #fff;
+    text-align: center;
+}
 .content {
+    /* margin-top: 10px; */
+    min-height: calc(100% - 120px - 60px - 10px);
+    background: #fff;
     padding: 10px;
     font-size: 18px;
     box-sizing: border-box;
