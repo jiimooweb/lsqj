@@ -23,17 +23,21 @@
             </van-swipe>
         </div>
         <div class="nav">
-            <div class="nav-item">
+            <div class="nav-item" @click="$router.push({path:'/goodsList?id=generals'})">
+                <img src="../../assets/general.png">
+                <p>精选商品</p>
+            </div>
+            <div class="nav-item" @click="$router.push({path:'/goodsList?id=member'})">
                 <img src="../../assets/vip.png">
                 <p>会员专享</p>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" @click="$router.push({path:'/goodsList?id=discount'})">
                 <img src="../../assets/active.png">
                 <p>优惠商品</p>
             </div>
             <div class="nav-item" @click="$router.push({path:'/ticketList'})">
-                <img src="../../assets/active.png">
-                <p>门票购买</p>
+                <img src="../../assets/ticket.png">
+                <p>套餐门票</p>
             </div>
         </div>
         <div class="type">
@@ -276,7 +280,7 @@ export default {
         align-items: center;
         flex-wrap: wrap;
         &-item {
-            width: 20%;
+            width: 25%;
             height: 50px;
             img {
                 width: 30px;

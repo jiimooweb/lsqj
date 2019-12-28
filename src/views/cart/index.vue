@@ -209,17 +209,15 @@ export default {
                     ps:''
                 }
             }).then(res=>{
-                if(res.status === 1){
-                    Toast("订单创建成功");
+                Toast("订单创建成功");
                     for(let i=0;i<indexList.length;i++){
                         this.goods.splice(indexList[i],1)
                     }
                     localStorage.setItem('cartList',JSON.stringify(this.goods))
                     this.$router.push({path:'/orderDetail?id=' + res.id})
-                }else{
-                    Toast("订单创建失败");
+            }).catch(err=>{
+                Toast("订单创建失败");
                     this.verificationCart()
-                }
             })
         },
         //全选购物车

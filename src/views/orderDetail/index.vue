@@ -248,7 +248,20 @@ export default {
                 });
         },
         // 申请退款
-        returnOrder() {}
+        returnOrder() {
+            axios
+				.request({
+					url: "order/refund/" + localStorage.getItem("ticketId"),
+					method: "post",
+					data: {
+						phone: "暂无",
+						refund_reason: "暂无"
+					}
+				})
+				.then(res => {
+					Toast("已提交退款申请");
+				});
+        }
     },
     mounted() {
         this.getOrderData();
