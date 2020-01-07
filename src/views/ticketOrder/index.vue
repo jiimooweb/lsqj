@@ -14,12 +14,18 @@
         </div>
         <div class="row">
             <div class="left">数量</div>
-            <van-stepper v-model="num" :max="ticketData.daily_inventory" />
+            <van-stepper
+                v-model="num"
+                :max="ticketData.daily_inventory"
+            />
         </div>
         <div class="line"></div>
         <div class="row">
             <div class="left">小计</div>
-            <div class="right" style="color:#F56C6C">￥{{num * ticketData.price}}</div>
+            <div
+                class="right"
+                style="color:#F56C6C"
+            >￥{{num * ticketData.price}}</div>
         </div>
         <!-- 先不实现，等以后再说 -->
         <div class="row mtop">
@@ -29,35 +35,78 @@
         <div class="line"></div>
         <div class="row">
             <div class="left">实付金额</div>
-            <div class="right" style="color:#F56C6C">￥{{num * ticketData.price}}</div>
+            <div
+                class="right"
+                style="color:#F56C6C"
+            >￥{{num * ticketData.price}}</div>
         </div>
         <div class="row mtop">
             <div class="left">姓名</div>
-            <input class="right-input" type="text" v-model="name">
+            <input
+                class="right-input"
+                type="text"
+                v-model="name"
+            >
         </div>
         <div class="line"></div>
         <div class="row">
             <div class="left">手机号</div>
-            <input class="right-input" type="text" v-model="phone">
+            <input
+                class="right-input"
+                type="text"
+                v-model="phone"
+            >
         </div>
         <div class="line"></div>
-        <div class="row" @click="selectShow(true)">
+        <div
+            class="row"
+            @click="selectShow(true)"
+        >
             <div class="left">预定日期</div>
-            <p class="right-input" style='background:#fff;'>{{date}}</p>
+            <p
+                class="right-input"
+                style='background:#fff;'
+            >{{date}}</p>
         </div>
 
-        <button class="commit" @click="creatOrder()">
+        <button
+            class="commit"
+            @click="creatOrder()"
+        >
             提交订单
         </button>
-        <div class="selectTime" v-if="showSelect">
-            <van-datetime-picker class="time" @confirm='confirm' @cancel='cancel' v-model="date" type="date" :min-date="minDate" :max-date="maxDate"/>
+        <div
+            class="selectTime"
+            v-if="showSelect"
+        >
+            <van-datetime-picker
+                class="time"
+                @confirm='confirm'
+                @cancel='cancel'
+                v-model="date"
+                type="date"
+                :min-date="minDate"
+                :max-date="maxDate"
+            />
+        </div>
+        <div
+            class='loadingPage'
+            v-show='isLoading'
+        >
+            <van-loading
+                color="#fff"
+                size="35px"
+                vertical
+            >加载中...</van-loading>
         </div>
     </div>
 </template>
 
 <script>
-import { Stepper, Toast, Field, DatetimePicker } from "vant";
+import { Stepper, Toast, Field, DatetimePicker, Loading } from "vant";
 import axios from "../../public/axios.js";
+import Vue from "vue";
+Vue.use(Loading);
 export default {
     data() {
         return {
@@ -68,61 +117,68 @@ export default {
             name: "",
             phone: "",
             date: "",
-            ticketData: {}
+            ticketData: {},
+            isLoading: false
         };
     },
     components: {
         [Stepper.name]: Stepper,
         [Toast.name]: Toast,
         [DatetimePicker.name]: DatetimePicker,
-        [Field.name]: Field
+        [Field.name]: Field,
+        Loading
     },
     methods: {
-        confirm(a){
-            this.selectShow(false)
-            this.date = a.getFullYear() + '-' + (a.getMonth()+1) + '-' + a.getDate()
+        confirm(a) {
+            this.selectShow(false);
+            this.date =
+                a.getFullYear() + "-" + (a.getMonth() + 1) + "-" + a.getDate();
         },
-        cancel(){
-            this.selectShow(false)
+        cancel() {
+            this.selectShow(false);
         },
         selectShow(i) {
             this.showSelect = i;
         },
         getTicketData() {
             this.ticketData = JSON.parse(localStorage.getItem("ticketData"));
-            this.maxDate = new Date()
-            this.maxDate.setDate(new Date().getDate() + this.ticketData.from_now)
+            this.maxDate = new Date();
+            this.maxDate.setDate(
+                new Date().getDate() + this.ticketData.from_now
+            );
         },
         creatOrder() {
-            if(this.name === ''){
-                Toast('姓名不能为空');
-                return
-            }else if(this.phone === ''){
-                Toast('手机不能为空');
-                return
-            }else if(this.date === ''){
-                Toast('日期不能为空');
-                return
+            if (this.name === "") {
+                Toast("姓名不能为空");
+                return;
+            } else if (this.phone === "") {
+                Toast("手机不能为空");
+                return;
+            } else if (this.date === "") {
+                Toast("日期不能为空");
+                return;
             }
-            axios.request({
-                url:'order/orders',
-                method:'post',
-                data:{
-                    type:'ticket',
-                    ticket_id:this.ticketData.id,
-                    name:this.name,
-                    mobile:this.phone,
-                    purchase_quantity:this.num,
-                    booking_date:this.date,
-                }
-            }).then(res=>{
-                if(res.status === 1){
-                    localStorage.setItem('ticketId',res.id)
-                    this.$router.push({path:'/ticketOrderDetail'})
-                }else{
-                    Toast('下单失败，请稍后重试');
-                }
-            })
+            axios
+                .request({
+                    url: "order/orders",
+                    method: "post",
+                    data: {
+                        type: "ticket",
+                        ticket_id: this.ticketData.id,
+                        name: this.name,
+                        mobile: this.phone,
+                        purchase_quantity: this.num,
+                        booking_date: this.date
+                    }
+                })
+                .then(res => {
+                    if (res.status === 1) {
+                        localStorage.setItem("ticketId", res.id);
+                        this.$router.push({ path: "/ticketOrderDetail" });
+                    } else {
+                        Toast("下单失败，请稍后重试");
+                    }
+                });
         }
     },
     mounted() {
@@ -132,6 +188,17 @@ export default {
 </script>
 
 <style scoped>
+.loadingPage {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .page {
     text-align: left;
     background-color: #f1f1f1;
@@ -290,7 +357,7 @@ export default {
     bottom: 0;
     width: 100%;
 }
-.time li{
+.time li {
     text-align: center;
 }
 </style>

@@ -3,11 +3,29 @@
         <!-- <p class="order-title">
             <span>我的订单</span>
         </p> -->
-        <van-tabs v-model="orderType" class="order-tab" @change="changeIndex">
-            <van-tab :title="item.label" v-for="(item,index) in orderText" :key='index'></van-tab>
+        <van-tabs
+            v-model="orderType"
+            class="order-tab"
+            @change="changeIndex"
+        >
+            <van-tab
+                :title="item.label"
+                v-for="(item,index) in orderText"
+                :key='index'
+            ></van-tab>
         </van-tabs>
-        <van-list v-model="loading" :finished="finished" finished-text="没有更多数据" @load="onLoad" class="order-list">
-            <div class="order-list-item" v-for='(item,index) in orderList' :key='index'>
+        <van-list
+            v-model="loading"
+            :finished="finished"
+            finished-text="没有更多数据"
+            @load="onLoad"
+            class="order-list"
+        >
+            <div
+                class="order-list-item"
+                v-for='(item,index) in orderList'
+                :key='index'
+            >
                 <div class="order-list-item-conter">
                     <div class="order-list-item-conter-img">
                         <img :src="item.fan_ticket[0].ticket.cover">
@@ -22,33 +40,55 @@
                     </div>
                 </div>
                 <div class="order-list-item-click">
-                    <van-button class="order-list-item-click-intoDefail" round type="default" size="small" @click="inOrderDetail(item.id)">订单详情</van-button>
+                    <van-button
+                        class="order-list-item-click-intoDefail"
+                        round
+                        type="default"
+                        size="small"
+                        @click="inOrderDetail(item.id)"
+                    >订单详情</van-button>
                     <!-- <van-button class="order-list-item-click-qrcode" v-if="item.pay_state === 1" round type="default" size="small">核销二维码</van-button> -->
                 </div>
             </div>
-            <p v-if="orderList.length === 0" class="noData">没有更多数据</p>
+            <p
+                v-if="orderList.length === 0"
+                class="noData"
+            >没有更多数据</p>
         </van-list>
+        <div
+            class='loadingPage'
+            v-show='isLoading'
+        >
+            <van-loading
+                color="#fff"
+                size="35px"
+                vertical
+            >加载中...</van-loading>
+        </div>
     </div>
 </template>
 
 <script>
-import { List, Tab, Tabs, Button } from "vant";
+import { List, Tab, Tabs, Button, Loading } from "vant";
 import axios from "../../public/axios";
-
+import Vue from "vue";
+Vue.use(Loading);
 export default {
     components: {
         [Tab.name]: Tab,
         [List.name]: List,
         [Tabs.name]: Tabs,
-        [Button.name]: Button
+        [Button.name]: Button,
+        Loading
     },
     data() {
         return {
-            isLast:false,
-            currentIndex:0,
-            loading:false,
-            finished:false,
+            isLast: false,
+            currentIndex: 0,
+            loading: false,
+            finished: false,
             orderType: 0,
+            isLoading: false,
             orderText: [
                 {
                     label: "全部",
@@ -82,23 +122,24 @@ export default {
         }
     },
     methods: {
-        onLoad(){
-            if(!this.isLast){
-                this.getOrder(this.currentIndex)
+        onLoad() {
+            if (!this.isLast) {
+                this.getOrder(this.currentIndex);
             }
-            this.finished = this.isLast
-            this.loading = false
+            this.finished = this.isLast;
+            this.loading = false;
         },
         inOrderDetail(id) {
-            localStorage.setItem('ticketId',id)
+            localStorage.setItem("ticketId", id);
             this.$router.push("/ticketOrderDetail");
         },
-        changeIndex(index){
-            this.isChangeIndex = true
-            this.getOrder(index)
+        changeIndex(index) {
+            this.isChangeIndex = true;
+            this.getOrder(index);
         },
         getOrder(index) {
-            this.currentIndex = index
+            this.isLoading = true;
+            this.currentIndex = index;
             let pay, use, url;
             if (index === 1) {
                 pay = 0;
@@ -117,23 +158,23 @@ export default {
                         url: "mall/order/type",
                         method: "post",
                         data: {
-                            type:'ticket'
+                            type: "ticket"
                         }
                     })
                     .then(res => {
                         console.log(res);
-                        
-                        if(this.isChangeIndex){
+                        this.isLoading = false;
+                        if (this.isChangeIndex) {
                             this.orderList = [];
                         }
                         for (let i = 0; i < res.data.data.length; i++) {
                             this.orderList.push(res.data.data[i]);
                         }
-                        if(res.data.current_page === res.data.last_page){
-                            this.isLast = true
-                            this.loading = false
+                        if (res.data.current_page === res.data.last_page) {
+                            this.isLast = true;
+                            this.loading = false;
                         }
-                        this.isChangeIndex = false
+                        this.isChangeIndex = false;
                     });
             } else {
                 axios
@@ -143,21 +184,22 @@ export default {
                         data: {
                             pay_state: pay,
                             use_state: use,
-                            type:'ticket'
+                            type: "ticket"
                         }
                     })
                     .then(res => {
-                        if(this.isChangeIndex){
+                        this.isLoading = false;
+                        if (this.isChangeIndex) {
                             this.orderList = [];
                         }
                         for (let i = 0; i < res.data.data.length; i++) {
                             this.orderList.push(res.data.data[i]);
                         }
-                        if(res.data.current_page === res.data.last_page){
-                            this.isLast = true
-                            this.loading = false
+                        if (res.data.current_page === res.data.last_page) {
+                            this.isLast = true;
+                            this.loading = false;
                         }
-                        this.isChangeIndex = false
+                        this.isChangeIndex = false;
                     });
             }
         }
@@ -170,6 +212,17 @@ export default {
 </script>
 
 <style lang="less">
+.loadingPage {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .order {
     width: 100%;
     height: calc(100% - 50px);
@@ -271,7 +324,7 @@ export default {
         }
     }
 }
-.noData{
+.noData {
     font-size: 16px;
 }
 </style>
